@@ -70,7 +70,6 @@ public class GUIBetweenle extends Application {
     }
 
     public void crearVentanaConfiguracion(Stage stage) {
-        // ── OPCIONES IDIOMA ───────────────────────────────────────
         Label labelIdioma = new Label("Idioma:");
         labelIdioma.getStyleClass().add("label-config");
 
