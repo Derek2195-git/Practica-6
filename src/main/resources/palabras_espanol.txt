@@ -50439,7 +50439,7 @@ manducador
 manducar
 manducatoria
 mandurria
-mandy:Nombre propio
+mandy:nombre propio
 manea
 manear
 manecilla

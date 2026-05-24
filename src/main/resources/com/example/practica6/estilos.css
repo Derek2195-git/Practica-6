@@ -32,6 +32,7 @@
     -fx-background: transparent;
     -fx-border-color: transparent;
 }
+
 .scroll-historial .viewport {
     -fx-background-color: transparent;
 }
@@ -47,9 +48,21 @@
     -fx-font-family: "Consolas", "Courier New", monospace;
     -fx-background-radius: 6;
 }
-.celda-correcto { -fx-background-color: #538d4e; -fx-text-fill: white; }
-.celda-bajo     { -fx-background-color: #4A90D9; -fx-text-fill: white; }
-.celda-alto     { -fx-background-color: #c9a84c; -fx-text-fill: white; }
+
+.celda-correcto {
+    -fx-background-color: #538d4e;
+    -fx-text-fill: white;
+}
+
+.celda-bajo {
+    -fx-background-color: #4A90D9;
+    -fx-text-fill: white;
+}
+
+.celda-alto {
+    -fx-background-color: #c9a84c;
+    -fx-text-fill: white;
+}
 
 .seccion-entrada {
     -fx-background-color: #041712;
@@ -57,6 +70,7 @@
     -fx-border-width: 1 0 0 0;
     -fx-padding: 14 20 14 20;
 }
+
 .campo-texto {
     -fx-font-size: 15px;
     -fx-padding: 8 12 8 12;
@@ -65,9 +79,11 @@
     -fx-border-color: #041712;
     -fx-border-width: 1.5;
 }
+
 .campo-texto:focused {
     -fx-border-color: #4A90D9;
 }
+
 .btn-adivinar {
     -fx-background-color: #09d98a;
     -fx-text-fill: white;
@@ -77,8 +93,14 @@
     -fx-background-radius: 8;
     -fx-cursor: hand;
 }
-.btn-adivinar:hover  { -fx-background-color: #10da75; }
-.btn-adivinar:disabled { -fx-background-color: #aaaaaa; }
+
+.btn-adivinar:hover {
+    -fx-background-color: #10da75;
+}
+
+.btn-adivinar:disabled {
+    -fx-background-color: #aaaaaa;
+}
 
 .celda-limite {
     -fx-background-color: #09d98a;
@@ -98,8 +120,39 @@
     -fx-background-radius: 6;
     -fx-padding: 4 8 4 8;
 }
+
 .approx-texto {
     -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
+}
+
+.button-shape {
+    -fx-background-color: #1a1a2e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.button-shape:hover {
+    -fx-background-color: #2e2e4e;
+}
+
+.btn-pista {
+    -fx-background-color: #e8a020;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-pista:hover {
+    -fx-background-color: #c8880a;
+}
+
+.btn-pista:disabled {
+    -fx-background-color: #aaaaaa;
 }

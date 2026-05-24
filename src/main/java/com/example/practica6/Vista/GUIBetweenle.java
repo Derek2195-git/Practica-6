@@ -24,10 +24,9 @@ public class GUIBetweenle extends Application {
     private VBox contenedorFilas;
     private String textoActual = "";
 
-    @Override
-    public void start(Stage stage) throws IOException {
+    public void crearVentanaJuego(Stage stage) {
         diccionario = new Diccionario(false);
-        juego = new Betweenle("perro", 14);
+        juego = new Betweenle(diccionario.getPalabraAleatoria(5), 14);
 
         VBox contenedorVertical = new VBox(0);
         contenedorVertical.getStyleClass().add("fondo-betweenle");
@@ -47,8 +46,8 @@ public class GUIBetweenle extends Application {
         HBox.setHgrow(espacio1, Priority.ALWAYS);
         HBox.setHgrow(espacio2, Priority.ALWAYS);
 
-        Button btnMenu = new Button("☰");
-        Button btnStats = new Button("📊");
+        ImageButton btnMenu = new ImageButton("/com/example/practica6/menu.png",64,64);
+        ImageButton btnStats = new ImageButton( "/com/example/practica6/estadisticas.png",64,64);
 
         topBar.getChildren().addAll(btnMenu, espacio1, labelTitulo, espacio2, btnStats);
 
@@ -117,7 +116,10 @@ public class GUIBetweenle extends Application {
 
         SoundButton btnAdivinar = new SoundButton("Adivinar", "/com/example/practica6/mob.mp3");
         btnAdivinar.getStyleClass().add("btn-adivinar");
-        seccionBoton.getChildren().add(btnAdivinar);
+
+        ImageButton btnPista = new ImageButton("Pista", "/com/example/practica6/prueba.png");
+        btnPista.getStyleClass().add("btn-pista");
+        seccionBoton.getChildren().addAll(btnAdivinar, btnPista);
 
         seccionCentral.getChildren().addAll(bloqueBajo, filasConEspaciador, bloqueAlto);
 
@@ -152,14 +154,38 @@ public class GUIBetweenle extends Application {
                     }
                     break;
             }
+            scene.getRoot().requestFocus();
         });
 
-        btnAdivinar.setOnAction(e -> procesarIntento(filaEscribir, btnAdivinar));
+        btnAdivinar.setOnAction(e -> {
+            procesarIntento(filaEscribir, btnAdivinar);
+            scene.getRoot().requestFocus();
+        });
+
+        btnMenu.setOnAction(e -> {
+            mostrarAlerta("Aquí iría el menú principal (por implementar).", Alert.AlertType.INFORMATION);
+            scene.getRoot().requestFocus();
+        });
+
+        btnStats.setOnAction(e -> {
+            mostrarEstadisticas();
+            scene.getRoot().requestFocus();
+        });
+
+        btnPista.setOnAction(e -> {
+            usarPista(btnPista);
+            scene.getRoot().requestFocus();
+        });
 
         stage.setTitle("Betweenle");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+    }
+
+    @Override
+    public void start(Stage stage) {
+
     }
 
     private StackPane crearBloqueAprox(String texto) {
@@ -218,18 +244,43 @@ public class GUIBetweenle extends Application {
             return;
         }
         if (!diccionario.esUnaPalabraValida(intento)) {
-            mostrarAlerta("La palabra '" + intento + "' no está en el diccionario.", Alert.AlertType.WARNING);
-            return;
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle(null);
+            confirmacion.setHeaderText(null);
+            confirmacion.setContentText("La palabra '" + intento.toLowerCase() + "' no está en el diccionario. ¿Deseas añadirla?");
+            confirmacion.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+
+            boolean agregar = confirmacion.showAndWait()
+                    .map(tipo -> tipo == ButtonType.YES)
+                    .orElse(false);
+
+            if (!agregar) return;
+
+            // Pedir definición
+            TextInputDialog inputDefinicion = new TextInputDialog();
+            inputDefinicion.setTitle(null);
+            inputDefinicion.setHeaderText(null);
+            inputDefinicion.setContentText("Escribe la definición de '" + intento.toUpperCase() + "':");
+
+            String definicion = inputDefinicion.showAndWait().orElse("").trim();
+            if (definicion.isEmpty()) return;
+
+            diccionario.agregarPalabraArchivo(intento, definicion);
+            // Continuar con el intento normalmente
         }
 
         int resultado = juego.adivinarPalabra(intento);
 
         if (resultado == 2) {
-            mostrarAlerta("La palabra está por debajo del límite inferior.", Alert.AlertType.INFORMATION);
+            mostrarAlerta("La palabra introducida está fuera del rango actual. " +
+                    "Introduce una palabra que se ubique *despues* de " + juego.getPalabraBaja().toUpperCase(),
+                    Alert.AlertType.INFORMATION);
             return;
         }
         if (resultado == 3) {
-            mostrarAlerta("La palabra está por encima del límite superior.", Alert.AlertType.INFORMATION);
+            mostrarAlerta("La palabra introducida está fuera del rango actual. " +
+                            "Introduce una palabra que se ubique *antes* de " + juego.getPalabraAlta().toUpperCase(),
+                    Alert.AlertType.INFORMATION);
             return;
         }
 
@@ -258,13 +309,17 @@ public class GUIBetweenle extends Application {
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
         String limiteFinal   = "z".repeat(juego.getPalabraSecreta().length());
 
-        if (!juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
-            double proxAlta = juego.calcularProximidadLimite(juego.getPalabraAlta(), diccionario);
-            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.format("%.2f", proxAlta));
+        double[] distancias = null;
+        if (!juego.getPalabraBaja().equals(limiteInicial) || !juego.getPalabraAlta().equals(limiteFinal)) {
+            distancias = new double[]{
+                    juego.calcularProximidadLimite(juego.getPalabraBaja(), diccionario),
+                    juego.calcularProximidadLimite(juego.getPalabraAlta(), diccionario)
+            };
         }
-        if (!juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
-            double proxBaja = juego.calcularProximidadLimite(juego.getPalabraBaja(), diccionario);
-            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.format("%.2f", proxBaja));
+
+        if (distancias != null) {
+            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.format("%.2f", distancias[0]));
+            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.format("%.2f", distancias[1]));
         }
 
         if (resultado == 0 || juego.juegoGanado()) {
@@ -286,4 +341,99 @@ public class GUIBetweenle extends Application {
             }
         }
     }
+
+    private void mostrarEstadisticas() {
+        java.util.ArrayList<String> historial = juego.getHistorialPalabras();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Intentos realizados: ")
+                .append(juego.getIntentosTotales() - juego.getIntentosRestantes())
+                .append(" / ").append(juego.getIntentosTotales()).append("\n\n");
+
+        if (historial.isEmpty()) {
+            sb.append("No se ha realizado ningún intento.");
+        } else {
+            sb.append("Palabras ingresadas:\n");
+            for (int i = 0; i < historial.size(); i++) {
+                sb.append("  #").append(i + 1).append(": ")
+                        .append(historial.get(i).toUpperCase()).append("\n");
+            }
+        }
+
+        sb.append("\nLetras usadas:\n  ");
+        String letras = juego.getLetrasUsadas().stream()
+                .sorted(Character::compareTo)
+                .map(String::valueOf)
+                .collect(java.util.stream.Collectors.joining(", "));
+        sb.append(letras.isEmpty() ? "-" : letras);
+
+        mostrarAlerta(sb.toString(), Alert.AlertType.INFORMATION);
+    }
+
+    private void usarPista(Button btnPista) {
+        String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
+        String limiteFinal   = "z".repeat(juego.getPalabraSecreta().length());
+
+        if (juego.isPistaUsada()) {
+            mostrarAlerta("Ya usaste tu pista en esta partida.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Diálogo con las 3 opciones
+        ChoiceDialog<String> dialogo = new ChoiceDialog<>(
+                "Recorrer límite alto",
+                "Recorrer límite alto",
+                "Recorrer límite bajo",
+                "Mostrar primera letra"
+        );
+        dialogo.setTitle("Pista");
+        dialogo.setHeaderText(null);
+        dialogo.setContentText("Elige tu pista:");
+
+        dialogo.showAndWait().ifPresent(opcion -> {
+            switch (opcion) {
+                case "Recorrer límite alto":
+                    if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
+                        mostrarAlerta("El límite de abajo ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
+                        return;
+                    }
+                    String nuevaBaja = juego.recorrerLimites(diccionario, false);
+                    if (nuevaBaja.isEmpty()) {
+                        mostrarAlerta("El límite bajo ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
+                    } else {
+                        juego.setPalabraBaja(nuevaBaja);
+                        cuadrosPalabraBaja.getChildren().setAll(crearFilaLimite(nuevaBaja).getChildren());
+                        juego.setPistaUsada(true);
+                        btnPista.setDisable(true);
+                        mostrarAlerta("Nuevo límite bajo: " + nuevaBaja.toUpperCase(), Alert.AlertType.INFORMATION);
+                    }
+                    break;
+
+                case "Recorrer límite bajo":
+                    if (juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
+                        mostrarAlerta("No se puede dar una pista aún, los límites siguen siendo los iniciales.", Alert.AlertType.INFORMATION);
+                        return;
+                    }
+                    String nuevaAlta = juego.recorrerLimites(diccionario, true);
+                    if (nuevaAlta.isEmpty()) {
+                        mostrarAlerta("El límite de arriba ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
+                    } else {
+                        juego.setPalabraAlta(nuevaAlta);
+                        cuadrosPalabraAlta.getChildren().setAll(crearFilaLimite(nuevaAlta).getChildren());
+                        juego.setPistaUsada(true);
+                        btnPista.setDisable(true);
+                        mostrarAlerta("Nuevo límite alto: " + nuevaAlta.toUpperCase(), Alert.AlertType.INFORMATION);
+                    }
+                    break;
+
+                case "Mostrar primera letra":
+                    char primeraLetra = juego.getPalabraSecreta().charAt(0);
+                    juego.setPistaUsada(true);
+                    btnPista.setDisable(true);
+                    mostrarAlerta("La palabra secreta empieza con: " + Character.toUpperCase(primeraLetra), Alert.AlertType.INFORMATION);
+                    break;
+            }
+        });
+    }
+
 }
