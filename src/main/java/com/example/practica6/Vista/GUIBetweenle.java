@@ -23,10 +23,189 @@ public class GUIBetweenle extends Application {
     private Label labelIntentos;
     private VBox contenedorFilas;
     private String textoActual = "";
+    private boolean esIngles = false;
+    private int longitud = 5;
+    private int intentos = 14;
+
+
+
+    @Override
+    public void start(Stage stage) {
+        Label titulo = new Label("BETWEENLE");
+        titulo.getStyleClass().add("label-titulo");
+
+        Button btnJugar = new Button("Jugar");
+        btnJugar.getStyleClass().add("btn-menu");
+
+        Button btnSalir = new Button("Salir");
+        btnSalir.getStyleClass().addAll("btn-menu", "btn-salir");
+
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(40));
+        root.getStyleClass().add("fondo-betweenle");
+        root.getChildren().addAll(titulo, btnJugar, btnSalir);
+
+        btnJugar.setOnAction(e -> {
+            try {
+                crearVentanaConfiguracion(stage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        btnSalir.setOnAction(e -> stage.close());
+
+        Scene scene = new Scene(root, 480, 620);
+        try {
+            scene.getStylesheets().add(
+                    getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
+        } catch (NullPointerException ex) {
+            System.out.println("No se encontró estilos.css");
+        }
+
+        stage.setTitle("Betweenle");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    public void crearVentanaConfiguracion(Stage stage) {
+        // ── OPCIONES IDIOMA ───────────────────────────────────────
+        Label labelIdioma = new Label("Idioma:");
+        labelIdioma.getStyleClass().add("label-config");
+
+        ToggleGroup grupoIdioma = new ToggleGroup();
+        RadioButton rbEspanol = new RadioButton("Español");
+        RadioButton rbIngles  = new RadioButton("Inglés");
+        rbEspanol.setToggleGroup(grupoIdioma);
+        rbIngles.setToggleGroup(grupoIdioma);
+        rbEspanol.setSelected(true);
+        rbEspanol.getStyleClass().add("radio-config");
+        rbIngles.getStyleClass().add("radio-config");
+
+        HBox filaIdioma = new HBox(20, rbEspanol, rbIngles);
+        filaIdioma.setAlignment(Pos.CENTER);
+
+        // ── OPCIONES DIFICULTAD ───────────────────────────────────
+        Label labelDificultad = new Label("Longitud de la palabra:");
+        labelDificultad.getStyleClass().add("label-config");
+
+        ToggleGroup grupoDificultad = new ToggleGroup();
+        RadioButton rbFacil  = new RadioButton("Fácil (5 letras)");
+        RadioButton rbMedio  = new RadioButton("Medio (6 letras)");
+        RadioButton rbCustom = new RadioButton("Personalizado:");
+        rbFacil.setToggleGroup(grupoDificultad);
+        rbMedio.setToggleGroup(grupoDificultad);
+        rbCustom.setToggleGroup(grupoDificultad);
+        rbFacil.setSelected(true);
+        rbFacil.getStyleClass().add("radio-config");
+        rbMedio.getStyleClass().add("radio-config");
+        rbCustom.getStyleClass().add("radio-config");
+
+        TextField campoPalabra = new TextField();
+        campoPalabra.setPromptText("Longitud (3-12)");
+        campoPalabra.setPrefWidth(120);
+        campoPalabra.getStyleClass().add("campo-texto");
+        campoPalabra.setDisable(true);
+
+        rbCustom.setOnAction(e -> campoPalabra.setDisable(false));
+        rbFacil.setOnAction(e  -> campoPalabra.setDisable(true));
+        rbMedio.setOnAction(e  -> campoPalabra.setDisable(true));
+
+        HBox filaCustom = new HBox(10, rbCustom, campoPalabra);
+        filaCustom.setAlignment(Pos.CENTER_LEFT);
+
+        VBox filaDificultad = new VBox(10, rbFacil, rbMedio, filaCustom);
+        filaDificultad.setAlignment(Pos.CENTER);
+
+        // ── OPCIONES INTENTOS ─────────────────────────────────────
+        Label labelIntentos = new Label("Número de intentos:");
+        labelIntentos.getStyleClass().add("label-config");
+
+        ToggleGroup grupoIntentos = new ToggleGroup();
+        RadioButton rb14 = new RadioButton("14 intentos");
+        RadioButton rb12 = new RadioButton("12 intentos");
+        RadioButton rb10 = new RadioButton("10 intentos");
+        rb14.setToggleGroup(grupoIntentos);
+        rb12.setToggleGroup(grupoIntentos);
+        rb10.setToggleGroup(grupoIntentos);
+        rb14.setSelected(true);
+        rb14.getStyleClass().add("radio-config");
+        rb12.getStyleClass().add("radio-config");
+        rb10.getStyleClass().add("radio-config");
+
+        HBox filaIntentos = new HBox(20, rb14, rb12, rb10);
+        filaIntentos.setAlignment(Pos.CENTER);
+
+        // ── BOTONES ───────────────────────────────────────────────
+        Button btnJugar  = new Button("Iniciar juego");
+        Button btnVolver = new Button("Volver");
+        btnJugar.getStyleClass().add("btn-menu");
+        btnVolver.getStyleClass().addAll("btn-menu", "btn-salir");
+
+        // ── LAYOUT ────────────────────────────────────────────────
+        Label titulo = new Label("Configuración");
+        titulo.getStyleClass().add("label-titulo");
+
+        VBox root = new VBox(24);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(40));
+        root.getStyleClass().add("fondo-betweenle");
+        root.getChildren().addAll(
+                titulo,
+                labelIdioma, filaIdioma,
+                labelDificultad, filaDificultad,
+                labelIntentos, filaIntentos,
+                btnJugar, btnVolver
+        );
+
+        // ── ACCIONES ──────────────────────────────────────────────
+        btnVolver.setOnAction(e -> start(stage));
+
+        btnJugar.setOnAction(e -> {
+            // Leer idioma
+            esIngles = rbIngles.isSelected();
+
+            // Leer longitud
+            if (rbFacil.isSelected())      longitud = 5;
+            else if (rbMedio.isSelected()) longitud = 6;
+            else {
+                try {
+                    longitud = Integer.parseInt(campoPalabra.getText().trim());
+                    if (longitud < 7 || longitud > 14) {
+                        mostrarAlerta("La longitud debe estar entre 7 y 14.", Alert.AlertType.WARNING);
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+                    mostrarAlerta("Ingresa un número válido para la longitud.", Alert.AlertType.WARNING);
+                    return;
+                }
+            }
+
+            // Leer intentos
+            if (rb14.isSelected())      intentos = 14;
+            else if (rb12.isSelected()) intentos = 12;
+            else                        intentos = 10;
+
+            // Arrancar juego con los valores guardados en los campos
+            crearVentanaJuego(stage);
+        });
+
+        Scene scene = new Scene(root, 480, 620);
+        try {
+            scene.getStylesheets().add(
+                    getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
+        } catch (NullPointerException ex) {
+            System.out.println("No se encontró estilos.css");
+        }
+
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public void crearVentanaJuego(Stage stage) {
-        diccionario = new Diccionario(false);
-        juego = new Betweenle(diccionario.getPalabraAleatoria(5), 14);
+        diccionario = new Diccionario(esIngles);
+        juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
 
         VBox contenedorVertical = new VBox(0);
         contenedorVertical.getStyleClass().add("fondo-betweenle");
@@ -38,7 +217,7 @@ public class GUIBetweenle extends Application {
         Label labelTitulo = new Label("BETWEENLE");
         labelTitulo.getStyleClass().add("label-titulo");
 
-        labelIntentos = new Label("Intentos: 14/14");
+        labelIntentos = new Label("Intentos: " + intentos + "/" + intentos);
         labelIntentos.getStyleClass().add("label-intentos-top");
 
         Region espacio1 = new Region();
@@ -126,7 +305,16 @@ public class GUIBetweenle extends Application {
         // Final
         contenedorVertical.getChildren().addAll(topBar, labelIntentos, seccionCentral, seccionBoton);
 
-        Scene scene = new Scene(contenedorVertical, 480, 620);
+        int anchoCelda = 44;   // ancho de cada celda
+        int espaciado  = 6;    // spacing del HBox
+        int padding    = 60;   // padding lateral de la sección central
+        int anchoAprox = 70;   // espacio del bloque de aproximación
+
+        int anchoMinimo  = 480;
+        int anchoCalculado = (anchoCelda * longitud) + (espaciado * (longitud - 1)) + (anchoAprox * 2) + padding;
+        int anchoVentana = Math.max(anchoMinimo, anchoCalculado);
+
+        Scene scene = new Scene(contenedorVertical, anchoVentana, 620);
 
         try {
             scene.getStylesheets().add(getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
@@ -163,8 +351,22 @@ public class GUIBetweenle extends Application {
         });
 
         btnMenu.setOnAction(e -> {
-            mostrarAlerta("Aquí iría el menú principal (por implementar).", Alert.AlertType.INFORMATION);
+            Alert confirmacionMenu = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacionMenu.setTitle(null);
+            confirmacionMenu.setHeaderText(null);
+            confirmacionMenu.setContentText("¿Deseas volver al menú? Tu partida actual se borrará.");
+            confirmacionMenu.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+
+            boolean agregar = confirmacionMenu.showAndWait()
+                    .map(tipo -> tipo == ButtonType.YES)
+                    .orElse(false);
+
             scene.getRoot().requestFocus();
+
+            if (!agregar) return;
+
+
+            start(stage);
         });
 
         btnStats.setOnAction(e -> {
@@ -177,16 +379,14 @@ public class GUIBetweenle extends Application {
             scene.getRoot().requestFocus();
         });
 
+
+
         stage.setTitle("Betweenle");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
     }
 
-    @Override
-    public void start(Stage stage) {
-
-    }
 
     private StackPane crearBloqueAprox(String texto) {
         Label num = new Label(texto);

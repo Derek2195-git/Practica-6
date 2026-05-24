@@ -156,3 +156,33 @@
 .btn-pista:disabled {
     -fx-background-color: #aaaaaa;
 }
+
+.label-subtitulo {
+    -fx-font-size: 14px;
+    -fx-text-fill: #888888;
+    -fx-padding: 0 0 20 0;
+}
+.btn-menu {
+    -fx-background-color: #4A90D9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-padding: 12 0 12 0;
+    -fx-pref-width: 220px;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+.btn-menu:hover  { -fx-background-color: #357abd; }
+.btn-salir       { -fx-background-color: #c0392b; }
+.btn-salir:hover { -fx-background-color: #a93226; }
+
+.label-config {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+.radio-config {
+    -fx-font-size: 13px;
+    -fx-text-fill: #ffffff;
+}
+
