@@ -186,3 +186,22 @@
     -fx-text-fill: #ffffff;
 }
 
+.tecla-letra {
+    -fx-min-width: 26px;
+    -fx-min-height: 26px;
+    -fx-max-width: 26px;
+    -fx-max-height: 26px;
+    -fx-alignment: CENTER;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+}
+.tecla-valida {
+    -fx-background-color: #4A90D9;
+    -fx-text-fill: white;
+}
+.tecla-invalida {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #888888;
+}

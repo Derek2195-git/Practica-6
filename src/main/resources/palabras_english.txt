@@ -3827,7 +3827,7 @@ banana
 bananas
 banbury
 banca:bancas
-bancanc:Bancan chat?
+bancanc:bancan chat?
 bancroft
 band
 bandage
@@ -34594,6 +34594,7 @@ retriever
 retrievers
 retrieves
 retrieving
+retro:So retro
 retroactive
 retroactively
 retrofit

@@ -10,8 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Stack;
 
 public class GUIBetweenle extends Application {
     private Diccionario diccionario;
@@ -26,7 +24,7 @@ public class GUIBetweenle extends Application {
     private boolean esIngles = false;
     private int longitud = 5;
     private int intentos = 14;
-
+    private VBox tecladoRangos;
 
 
     @Override
@@ -85,7 +83,6 @@ public class GUIBetweenle extends Application {
         HBox filaIdioma = new HBox(20, rbEspanol, rbIngles);
         filaIdioma.setAlignment(Pos.CENTER);
 
-        // ── OPCIONES DIFICULTAD ───────────────────────────────────
         Label labelDificultad = new Label("Longitud de la palabra:");
         labelDificultad.getStyleClass().add("label-config");
 
@@ -204,7 +201,8 @@ public class GUIBetweenle extends Application {
 
     public void crearVentanaJuego(Stage stage) {
         diccionario = new Diccionario(esIngles);
-        juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
+        juego = new Betweenle("Aptos", intentos);
+        //juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
 
         VBox contenedorVertical = new VBox(0);
         contenedorVertical.getStyleClass().add("fondo-betweenle");
@@ -288,6 +286,11 @@ public class GUIBetweenle extends Application {
 
         filasConEspaciador.getChildren().addAll(espaciador, filaEscribir);
 
+        tecladoRangos = new VBox(6);
+        tecladoRangos.setAlignment(Pos.CENTER);
+        tecladoRangos.setPadding(new Insets (8, 0, 8, 0));
+        actualizarTeclado();
+
         HBox seccionBoton = new HBox();
         seccionBoton.setAlignment(Pos.CENTER);
         seccionBoton.getStyleClass().add("seccion-entrada");
@@ -302,7 +305,7 @@ public class GUIBetweenle extends Application {
         seccionCentral.getChildren().addAll(bloqueBajo, filasConEspaciador, bloqueAlto);
 
         // Final
-        contenedorVertical.getChildren().addAll(topBar, labelIntentos, seccionCentral, seccionBoton);
+        contenedorVertical.getChildren().addAll(topBar, labelIntentos, seccionCentral, tecladoRangos, seccionBoton);
 
         int anchoCelda = 44;   // ancho de cada celda
         int espaciado  = 6;    // spacing del HBox
@@ -327,6 +330,7 @@ public class GUIBetweenle extends Application {
                     if (!textoActual.isEmpty()) {
                         textoActual = textoActual.substring(0, textoActual.length() - 1);
                         actualizarFilaEscritura(filaEscribir);
+                        actualizarTeclado();
                     }
                     break;
                 case ENTER:
@@ -338,6 +342,7 @@ public class GUIBetweenle extends Application {
                             textoActual.length() < juego.getPalabraSecreta().length()) {
                         textoActual += letra;
                         actualizarFilaEscritura(filaEscribir);
+                        actualizarTeclado();
                     }
                     break;
             }
@@ -508,18 +513,8 @@ public class GUIBetweenle extends Application {
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
         String limiteFinal   = "z".repeat(juego.getPalabraSecreta().length());
 
-        double[] distancias = null;
-        if (!juego.getPalabraBaja().equals(limiteInicial) || !juego.getPalabraAlta().equals(limiteFinal)) {
-            distancias = new double[]{
-                    juego.calcularProximidadLimite(juego.getPalabraBaja(), diccionario),
-                    juego.calcularProximidadLimite(juego.getPalabraAlta(), diccionario)
-            };
-        }
-
-        if (distancias != null) {
-            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.valueOf(distancias[0]));
-            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.valueOf(distancias[1]));
-        }
+        calcularDistancias(limiteInicial, limiteFinal);
+        actualizarTeclado();
 
         if (resultado == 0 || juego.juegoGanado()) {
             mostrarAlerta("Felicidades, Ganaste el juego! La palabra era: " + juego.getPalabraSecreta(), Alert.AlertType.INFORMATION);
@@ -527,6 +522,20 @@ public class GUIBetweenle extends Application {
         } else if (juego.juegoAcabado()) {
             mostrarAlerta("El jugador se quedó sin intentos. La palabra secreta era " + juego.getPalabraSecreta(), Alert.AlertType.WARNING);
             btnAdivinar.setDisable(true);
+        }
+    }
+
+    private void calcularDistancias(String limiteInicial, String limiteFinal) {
+        double[] distancias = null;
+        if (!juego.getPalabraBaja().equals(limiteInicial) || !juego.getPalabraAlta().equals(limiteFinal)) {
+            distancias = new double[]{
+                    juego.calcularProximidadLimite(juego.getPalabraBaja(), diccionario),
+                    juego.calcularProximidadLimite(juego.getPalabraAlta(), diccionario)
+            };
+        }
+        if (distancias != null) {
+            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.valueOf(distancias[0]));
+            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.valueOf(distancias[1]));
         }
     }
 
@@ -632,7 +641,86 @@ public class GUIBetweenle extends Application {
                     mostrarAlerta("La palabra secreta empieza con: " + Character.toUpperCase(primeraLetra), Alert.AlertType.INFORMATION);
                     break;
             }
+            calcularDistancias(limiteInicial, limiteFinal);
+            actualizarTeclado();
         });
+
     }
+
+    private void actualizarTeclado() {
+        tecladoRangos.getChildren().clear();
+
+        HBox fila1 = new HBox(6);
+        HBox fila2 = new HBox(6);
+        fila1.setAlignment(Pos.CENTER);
+        fila2.setAlignment(Pos.CENTER);
+
+        int pos = Math.min(textoActual.length(), juego.getPalabraBaja().length() - 1);
+
+        char primeraLetra = 'a';
+        char ultimaLetra  = 'z';
+
+        // Analizar letra por letra hasta pos para saber en qué caso estamos
+        boolean dentroRangoBaja = true;  // el prefijo escrito == palabraBaja hasta aquí
+        boolean dentroRangoAlta = true;  // el prefijo escrito == palabraAlta hasta aquí
+
+        for (int i = 0; i < pos; i++) {
+            char escrita = i < textoActual.length() ? textoActual.charAt(i) : 0;
+            char cBaja   = juego.getPalabraBaja().charAt(i);
+            char cAlta   = juego.getPalabraAlta().charAt(i);
+
+            if (escrita != cBaja) dentroRangoBaja = false;
+            if (escrita != cAlta) dentroRangoAlta = false;
+        }
+
+        char cBajaPos = juego.getPalabraBaja().charAt(pos);
+        char cAltaPos = juego.getPalabraAlta().charAt(pos);
+
+        if (dentroRangoBaja && dentroRangoAlta) {
+            // Caso 1: prefijo igual en ambas → rango entre las dos letras
+            primeraLetra = cBajaPos;
+            ultimaLetra  = cAltaPos;
+        } else if (dentroRangoBaja) {
+            // Caso 2: pegado al límite bajo → desde letra de baja hasta z
+            primeraLetra = cBajaPos;
+            ultimaLetra  = 'z';
+        } else if (dentroRangoAlta) {
+            // Caso 3: pegado al límite alto → desde a hasta letra de alta
+            primeraLetra = 'a';
+            ultimaLetra  = cAltaPos;
+        } else {
+            // Verificar si el prefijo escrito está dentro del rango
+            // comparando lexicográficamente con palabraBaja y palabraAlta
+            boolean dentroDeRango = textoActual.compareTo(juego.getPalabraBaja()) > 0 &&
+                    textoActual.compareTo(juego.getPalabraAlta()) < 0;
+
+            if (dentroDeRango) {
+                // Dentro del rango → cualquier letra es válida
+                primeraLetra = 'a';
+                ultimaLetra  = 'z';
+            } else {
+                // Fuera del rango → todo inválido
+                primeraLetra = (char)('z' + 1);
+                ultimaLetra  = (char)('a' - 1);
+            }
+        }
+
+        for (char c = 'a'; c <= 'z'; c++) {
+            ShapeButton tecla = new ShapeButton(String.valueOf(c).toUpperCase(), 15);
+            tecla.getStyleClass().add("tecla-letra");
+
+            if (c >= primeraLetra && c <= ultimaLetra) {
+                tecla.getStyleClass().add("tecla-valida");
+            } else {
+                tecla.getStyleClass().add("tecla-invalida");
+            }
+
+            if (c <= 'm') fila1.getChildren().add(tecla);
+            else          fila2.getChildren().add(tecla);
+        }
+
+        tecladoRangos.getChildren().addAll(fila1, fila2);
+    }
+
 
 }

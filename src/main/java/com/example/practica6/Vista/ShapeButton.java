@@ -17,4 +17,16 @@ public class ShapeButton extends Button {
         getStyleClass().add("button-shape");
 
     }
+
+    public ShapeButton(String texto, double radio) {
+        super(texto);
+        Circle formaCircular = new Circle(radio);
+
+        setShape(formaCircular);
+        setMinSize(radio * 2, radio * 2);
+        setMaxSize(radio * 2, radio * 2);
+
+        getStyleClass().add("button-shape");
+
+    }
 }
