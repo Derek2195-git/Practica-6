@@ -1,0 +1,146 @@
+package com.example.practica6.Controlador;
+
+
+import com.example.practica6.Modelo.Betweenle;
+import com.example.practica6.Modelo.Diccionario;
+import com.example.practica6.Vista.Vista;
+
+public class Controlador {
+    private Diccionario diccionario;
+    private Betweenle juego;
+    private Vista vista;
+
+    public static void main(String[] args) {
+        Controlador controlador = new Controlador();
+        controlador.iniciarJuego();
+    }
+
+    public Controlador() {
+        vista = new Vista();
+
+        int idiomaSeleccionada = vista.preguntarIdioma();
+        boolean esIngles = (idiomaSeleccionada == 2);
+
+        int dificultadSeleccionada = vista.preguntarDificultad();
+        int longitud;
+        if (dificultadSeleccionada == 1) longitud = 5;
+        else if (dificultadSeleccionada == 2) longitud = 6;
+        else if (dificultadSeleccionada == 3) {
+            longitud = vista.pedirDificultad();
+        } else {
+            vista.dificultadPorDefectoSeleccionada();
+            longitud = 5;
+        }
+
+        int intentosSeleccionados = vista.preguntarIntentos();
+        int intentos;
+        if (intentosSeleccionados == 1) intentos = 14;
+        else if (intentosSeleccionados == 2) intentos = 12;
+        else intentos = 10;
+
+        diccionario = new Diccionario(esIngles);
+        String palabraElegida = diccionario.getPalabraAleatoria(longitud);
+        juego = new Betweenle(palabraElegida, intentos);
+    }
+
+    public void iniciarJuego() {
+        vista.mostrarBienvenida();
+        while (!juego.juegoAcabado() && !juego.juegoGanado()) {
+
+            String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
+            String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
+
+            double[] distancias = null;
+            if (!juego.getPalabraBaja().equals(limiteInicial) || !juego.getPalabraAlta().equals(limiteFinal)) {
+                distancias = new double[]{
+                        juego.calcularProximidadLimite(juego.getPalabraBaja(), diccionario),
+                        juego.calcularProximidadLimite(juego.getPalabraAlta(), diccionario)
+                };
+            }
+
+            vista.mostrarEstadoJuego(
+                    juego.getPalabraBaja(),
+                    juego.getPalabraAlta(),
+                    juego.getIntentosTotales(),
+                    juego.getIntentosRestantes(),
+                    distancias
+            );
+            vista.mostrarHistorialIntentos(juego.getHistorialPalabras(), juego.getLetrasUsadas());
+            int opcion = vista.mostrarMenuTurno();
+
+            if (opcion == 1) {
+                String intento = vista.preguntarPalabra();
+                if (intento.length() != juego.getPalabraSecreta().length()) {
+                    vista.mostrarAvisoTamaño(juego.getPalabraSecreta().length());
+                    continue;
+                }
+
+                if (!diccionario.esUnaPalabraValida(intento)) {
+                    int opcionAgregarPalabra = vista.preguntarAgregarPalabra(intento);
+                    if (opcionAgregarPalabra == 1) {
+                        String definicion = vista.preguntarDefinicion();
+                        diccionario.agregarPalabraArchivo(intento, definicion);
+                    } else {
+                        continue;
+                    }
+                }
+
+                int resultado = juego.adivinarPalabra(intento);
+                vista.mostrarResultado(resultado, juego.getPalabraAlta(), juego.getPalabraBaja());
+
+            } else if (opcion == 2) {
+                if (juego.isPistaUsada()) {
+                    vista.pistaUsada();
+                    continue;
+                }
+
+                // Dejar que la opcion pueda funcionar pero la 1 y 2 no dejen
+                int opcionPista = vista.preguntarOpcionPista();
+
+                if (opcionPista == 1) {
+                    String nuevaAlta = juego.recorrerLimites(diccionario, true);
+                    if (juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
+                        vista.mostrarPistaNoPosible();
+                        continue;
+                    }
+                    if (nuevaAlta.isEmpty()) {
+                        vista.mostrarLimiteAltoCercano();
+                    } else {
+                        juego.setPalabraAlta(nuevaAlta);
+                        vista.mostrarNuevoLimiteAlto(nuevaAlta);
+                        juego.setPistaUsada(true);
+                    }
+                } else if (opcionPista == 2){
+                    String nuevaBaja = juego.recorrerLimites(diccionario, false);
+                    if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
+                        vista.mostrarPistaNoPosible();
+                        continue;
+                    }
+                    if (nuevaBaja.isEmpty()) {
+                        vista.mostrarLimiteBajoCercano();
+                    } else {
+                        juego.setPalabraBaja(nuevaBaja);
+                        vista.mostrarNuevoLimiteBajo(nuevaBaja);
+                        juego.setPistaUsada(true);
+                    }
+                } else if (opcionPista == 3) {
+                    vista.mostrarPrimeraLetraSecreta(juego.getPalabraSecreta());
+                    juego.setPistaUsada(true);
+                }
+
+
+            } else if (opcion == 3) {
+                vista.mostrarRendicion(juego.getPalabraSecreta());
+                vista.mostrarHistorialIntentos(juego.getHistorialPalabras(), juego.getLetrasUsadas());
+                return;
+            }
+        }
+
+        if (juego.juegoGanado()) {
+            vista.mostrarVictoria(juego.getPalabraSecreta());
+        } else {
+            vista.mostrarDerrota(juego.getPalabraSecreta());
+        }
+        vista.mostrarHistorialIntentos(juego.getHistorialPalabras(), juego.getLetrasUsadas());
+    }
+}
