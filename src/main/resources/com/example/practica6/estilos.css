@@ -163,7 +163,7 @@
     -fx-padding: 0 0 20 0;
 }
 .btn-menu {
-    -fx-background-color: #4A90D9;
+    -fx-background-color: #27d983;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 15px;
@@ -172,9 +172,9 @@
     -fx-background-radius: 10;
     -fx-cursor: hand;
 }
-.btn-menu:hover  { -fx-background-color: #357abd; }
-.btn-salir       { -fx-background-color: #c0392b; }
-.btn-salir:hover { -fx-background-color: #a93226; }
+.btn-menu:hover  { -fx-background-color: #14f199; }
+.btn-salir       { -fx-background-color: #D9277D; }
+.btn-salir:hover { -fx-background-color: #F1146C; }
 
 .label-config {
     -fx-font-size: 14px;

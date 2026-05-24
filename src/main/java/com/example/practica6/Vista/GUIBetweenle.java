@@ -517,15 +517,15 @@ public class GUIBetweenle extends Application {
         }
 
         if (distancias != null) {
-            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.format("%.2f", distancias[0]));
-            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.format("%.2f", distancias[1]));
+            ((Label) labelAproxBaja.getChildren().get(0)).setText(String.valueOf(distancias[0]));
+            ((Label) labelAproxAlta.getChildren().get(0)).setText(String.valueOf(distancias[1]));
         }
 
         if (resultado == 0 || juego.juegoGanado()) {
-            mostrarAlerta("¡Felicidades! La palabra era: " + juego.getPalabraSecreta().toUpperCase(), Alert.AlertType.INFORMATION);
+            mostrarAlerta("Felicidades, Ganaste el juego! La palabra era: " + juego.getPalabraSecreta(), Alert.AlertType.INFORMATION);
             btnAdivinar.setDisable(true);
         } else if (juego.juegoAcabado()) {
-            mostrarAlerta("¡Sin intentos! La palabra era: " + juego.getPalabraSecreta().toUpperCase(), Alert.AlertType.WARNING);
+            mostrarAlerta("El jugador se quedó sin intentos. La palabra secreta era " + juego.getPalabraSecreta(), Alert.AlertType.WARNING);
             btnAdivinar.setDisable(true);
         }
     }

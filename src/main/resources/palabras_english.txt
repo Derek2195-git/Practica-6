@@ -3826,7 +3826,8 @@ banally
 banana
 bananas
 banbury
-banca:Bancas
+banca:bancas
+bancanc:Bancan chat?
 bancroft
 band
 bandage
@@ -28246,6 +28247,7 @@ odin
 odious
 odiously
 odiousness
+odist:ni idea que sea honestamente
 odium
 odor
 odorous
@@ -28700,6 +28702,7 @@ ostrander
 ostrich
 ostriches
 oswald
+otary:hermano realmente esta inventando palabras
 othello
 other
 others
