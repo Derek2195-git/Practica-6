@@ -3201,6 +3201,7 @@ alarije
 alarma
 alarmador
 alarmante
+alarmantes:plural de alarmante
 alarmar
 alarmega
 alarmismo
@@ -48003,7 +48004,7 @@ lavavajillas
 lavazas
 lave
 lavija
-lavos:Warframe
+lavos:warframe
 lavotear
 lavoteo
 laxacion
@@ -72112,6 +72113,7 @@ talacho
 talador
 taladrado
 taladrador
+taladrando:Accion de taladrar
 taladrar
 taladrilla
 taladro

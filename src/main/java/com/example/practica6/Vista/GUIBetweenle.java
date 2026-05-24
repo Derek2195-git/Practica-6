@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 
@@ -25,6 +26,7 @@ public class GUIBetweenle extends Application {
     private int longitud = 5;
     private int intentos = 14;
     private VBox tecladoRangos;
+    private static MediaPlayer musicaFondo = null;
 
 
     @Override
@@ -64,6 +66,7 @@ public class GUIBetweenle extends Application {
         stage.setTitle("Betweenle");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setOnShown(event -> {scene.getRoot().requestFocus();});
         stage.show();
     }
 
@@ -105,10 +108,20 @@ public class GUIBetweenle extends Application {
         sliderLongitud.setShowTickLabels(true);
         sliderLongitud.setPrefWidth(200);
         sliderLongitud.setDisable(true);
+        sliderLongitud.setVisible(false);
 
-        rbCustom.setOnAction(e -> sliderLongitud.setDisable(false));
-        rbFacil.setOnAction(e -> sliderLongitud.setDisable(true));
-        rbMedio.setOnAction(e -> sliderLongitud.setDisable(true));
+        rbCustom.setOnAction(e -> {
+            sliderLongitud.setDisable(false);
+            sliderLongitud.setVisible(true);
+        });
+        rbFacil.setOnAction(e -> {
+            sliderLongitud.setDisable(true);
+            sliderLongitud.setVisible(false);
+        });
+        rbMedio.setOnAction(e -> {
+            sliderLongitud.setDisable(true);
+            sliderLongitud.setVisible(false);
+        });
 
         VBox filaDificultad = new VBox(10, rbFacil, rbMedio, rbCustom, sliderLongitud);
         filaDificultad.setAlignment(Pos.CENTER);
@@ -191,10 +204,9 @@ public class GUIBetweenle extends Application {
 
     public void crearVentanaJuego(Stage stage) {
         diccionario = new Diccionario(esIngles);
-        juego = new Betweenle("Aptos", intentos);
-        //juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
+        //juego = new Betweenle("Awful", intentos);
+        juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
 
-        // Oh boy, espero que no pase nada en la vista la cual no me haga arrepentirme de cada segundo programando esto :D
         String cadenaIntentos = esIngles ? "Attempts: " : "Intento: ";
         String cadenaAdivinar = esIngles ? "Take a guess" : "Adivinar";
         String cadenaPista = esIngles ? "Hint" : "Pista";
@@ -366,14 +378,12 @@ public class GUIBetweenle extends Application {
             confirmacionMenu.getButtonTypes().setAll(btnSi, btnNo);
 
             boolean agregar = confirmacionMenu.showAndWait()
-                    .map(tipo -> tipo == ButtonType.YES)
+                    .map(tipo -> tipo == btnSi)
                     .orElse(false);
-
-            scene.getRoot().requestFocus();
 
             if (!agregar) return;
 
-
+            javafx.application.Platform.runLater(() -> stage.getScene().getRoot().requestFocus());
             start(stage);
         });
 
@@ -446,48 +456,63 @@ public class GUIBetweenle extends Application {
     private void procesarIntento(HBox filaEscritura, Button btnAdivinar) {
         String intento = textoActual.toLowerCase();
 
+        // Cadenas traducidas
+        String cadenaTamano      = esIngles ? "The word must have " + juego.getPalabraSecreta().length() + " letters."
+                : "La palabra debe tener " + juego.getPalabraSecreta().length() + " letras.";
+        String cadenaNoEnDic     = esIngles ? "The word '" + intento + "' is not in the dictionary. Add it?"
+                : "La palabra '" + intento + "' no está en el diccionario. ¿Deseas añadirla?";
+        String cadenaSi          = esIngles ? "Yes" : "Sí";
+        String cadenaDefinicion  = esIngles ? "Write the definition of '" + intento.toUpperCase() + "':"
+                : "Escribe la definición de '" + intento.toUpperCase() + "':";
+        String cadenaFueraBajo   = esIngles ? "Word out of range. Enter a word after: " + juego.getPalabraBaja().toUpperCase()
+                : "Palabra fuera del rango. Introduce una palabra después de: " + juego.getPalabraBaja().toUpperCase();
+        String cadenaFueraAlto   = esIngles ? "Word out of range. Enter a word before: " + juego.getPalabraAlta().toUpperCase()
+                : "Palabra fuera del rango. Introduce una palabra antes de: " + juego.getPalabraAlta().toUpperCase();
+        String cadenaGanaste     = esIngles ? "Congratulations, you won! The word was: " + juego.getPalabraSecreta().toUpperCase()
+                : "¡Felicidades, ganaste! La palabra era: " + juego.getPalabraSecreta().toUpperCase();
+        String cadenaPerdiste    = esIngles ? "Game over! The secret word was: " + juego.getPalabraSecreta().toUpperCase()
+                : "Sin intentos. La palabra secreta era: " + juego.getPalabraSecreta().toUpperCase();
+        String cadenaIntentos    = esIngles ? "Attempts: " : "Intentos: ";
+
         if (intento.length() != juego.getPalabraSecreta().length()) {
-            mostrarAlerta("La palabra debe tener " + juego.getPalabraSecreta().length() + " letras.", Alert.AlertType.WARNING);
+            mostrarAlerta(cadenaTamano, Alert.AlertType.WARNING);
             return;
         }
         if (!diccionario.esUnaPalabraValida(intento)) {
             Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacion.setTitle(null);
             confirmacion.setHeaderText(null);
-            confirmacion.setContentText("La palabra '" + intento.toLowerCase() + "' no está en el diccionario. ¿Deseas añadirla?");
-            confirmacion.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            confirmacion.setContentText(cadenaNoEnDic);
+
+            ButtonType btnSi = new ButtonType(cadenaSi);
+            ButtonType btnNo = new ButtonType("No");
+            confirmacion.getButtonTypes().setAll(btnSi, btnNo);
 
             boolean agregar = confirmacion.showAndWait()
-                    .map(tipo -> tipo == ButtonType.YES)
+                    .map(tipo -> tipo == btnSi)
                     .orElse(false);
 
             if (!agregar) return;
 
-            // Pedir definición
             TextInputDialog inputDefinicion = new TextInputDialog();
             inputDefinicion.setTitle(null);
             inputDefinicion.setHeaderText(null);
-            inputDefinicion.setContentText("Escribe la definición de '" + intento.toUpperCase() + "':");
+            inputDefinicion.setContentText(cadenaDefinicion);
 
             String definicion = inputDefinicion.showAndWait().orElse("").trim();
             if (definicion.isEmpty()) return;
 
             diccionario.agregarPalabraArchivo(intento, definicion);
-            // Continuar con el intento normalmente
         }
 
         int resultado = juego.adivinarPalabra(intento);
 
         if (resultado == 2) {
-            mostrarAlerta("La palabra introducida está fuera del rango actual. " +
-                            "Introduce una palabra que se ubique *despues* de " + juego.getPalabraBaja().toUpperCase(),
-                    Alert.AlertType.INFORMATION);
+            mostrarAlerta(cadenaFueraBajo, Alert.AlertType.INFORMATION);
             return;
         }
         if (resultado == 3) {
-            mostrarAlerta("La palabra introducida está fuera del rango actual. " +
-                            "Introduce una palabra que se ubique *antes* de " + juego.getPalabraAlta().toUpperCase(),
-                    Alert.AlertType.INFORMATION);
+            mostrarAlerta(cadenaFueraAlto, Alert.AlertType.INFORMATION);
             return;
         }
 
@@ -497,7 +522,6 @@ public class GUIBetweenle extends Application {
 
         // Limpiar fila de escritura
         if (resultado == 0 || juego.juegoGanado()) {
-            // Cambiar color de la fila de escritura a verde
             for (javafx.scene.Node node : filaEscritura.getChildren()) {
                 Label celda = (Label) node;
                 celda.getStyleClass().removeAll("celda-escritura");
@@ -511,7 +535,7 @@ public class GUIBetweenle extends Application {
         // Actualizar límites y aproximaciones
         cuadrosPalabraAlta.getChildren().setAll(crearFilaLimite(juego.getPalabraAlta()).getChildren());
         cuadrosPalabraBaja.getChildren().setAll(crearFilaLimite(juego.getPalabraBaja()).getChildren());
-        labelIntentos.setText("Intentos: " + juego.getIntentosRestantes() + "/" + juego.getIntentosTotales());
+        labelIntentos.setText(cadenaIntentos + juego.getIntentosRestantes() + "/" + juego.getIntentosTotales());
 
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
         String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
@@ -520,10 +544,10 @@ public class GUIBetweenle extends Application {
         actualizarTeclado();
 
         if (resultado == 0 || juego.juegoGanado()) {
-            mostrarAlerta("Felicidades, Ganaste el juego! La palabra era: " + juego.getPalabraSecreta(), Alert.AlertType.INFORMATION);
+            mostrarAlerta(cadenaGanaste, Alert.AlertType.INFORMATION);
             btnAdivinar.setDisable(true);
         } else if (juego.juegoAcabado()) {
-            mostrarAlerta("El jugador se quedó sin intentos. La palabra secreta era " + juego.getPalabraSecreta(), Alert.AlertType.WARNING);
+            mostrarAlerta(cadenaPerdiste, Alert.AlertType.WARNING);
             btnAdivinar.setDisable(true);
         }
     }
@@ -556,22 +580,27 @@ public class GUIBetweenle extends Application {
     private void mostrarEstadisticas() {
         java.util.ArrayList<String> historial = juego.getHistorialPalabras();
 
+        String cadenaIntentosRealizados = esIngles ? "Attempts made: " : "Intentos realizados: ";
+        String cadenaNingunIntento      = esIngles ? "No attempts made yet." : "No se ha realizado ningún intento.";
+        String cadenaIngresadas         = esIngles ? "Words entered:\n" : "Palabras ingresadas:\n";
+        String cadenaLetrasUsadas       = esIngles ? "\nLetters used:\n  " : "\nLetras usadas:\n  ";
+
         StringBuilder sb = new StringBuilder();
-        sb.append("Intentos realizados: ")
+        sb.append(cadenaIntentosRealizados)
                 .append(juego.getIntentosTotales() - juego.getIntentosRestantes())
                 .append(" / ").append(juego.getIntentosTotales()).append("\n\n");
 
         if (historial.isEmpty()) {
-            sb.append("No se ha realizado ningún intento.");
+            sb.append(cadenaNingunIntento);
         } else {
-            sb.append("Palabras ingresadas:\n");
+            sb.append(cadenaIngresadas);
             for (int i = 0; i < historial.size(); i++) {
                 sb.append("  #").append(i + 1).append(": ")
                         .append(historial.get(i).toUpperCase()).append("\n");
             }
         }
 
-        sb.append("\nLetras usadas:\n  ");
+        sb.append(cadenaLetrasUsadas);
         String letras = juego.getLetrasUsadas().stream()
                 .sorted(Character::compareTo)
                 .map(String::valueOf)
@@ -610,7 +639,7 @@ public class GUIBetweenle extends Application {
 
         // Diálogo con las 3 opciones
         ChoiceDialog<String> dialogo = new ChoiceDialog<>(
-                "Recorrer límite alto",
+                cadenaOpc1,
                 cadenaOpc1,
                 cadenaOpc2,
                 cadenaOpc3
@@ -621,48 +650,45 @@ public class GUIBetweenle extends Application {
 
         dialogo.showAndWait().ifPresent(opcion -> {
 
-            switch (opcion) {
-                case "Recorrer límite alto":
-                    if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
-                        mostrarAlerta("El límite de abajo ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
-                        return;
-                    }
-                    String nuevaBaja = juego.recorrerLimites(diccionario, false);
-                    if (nuevaBaja.isEmpty()) {
-                        mostrarAlerta("El límite bajo ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
-                    } else {
-                        juego.setPalabraBaja(nuevaBaja);
-                        cuadrosPalabraBaja.getChildren().setAll(crearFilaLimite(nuevaBaja).getChildren());
-                        juego.setPistaUsada(true);
-                        btnPista.setDisable(true);
-                        mostrarAlerta("Nuevo límite bajo: " + nuevaBaja.toUpperCase(), Alert.AlertType.INFORMATION);
-                    }
-                    break;
-
-                case "Recorrer límite bajo":
-                    if (juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
-                        mostrarAlerta("No se puede dar una pista aún, los límites siguen siendo los iniciales.", Alert.AlertType.INFORMATION);
-                        return;
-                    }
-                    String nuevaAlta = juego.recorrerLimites(diccionario, true);
-                    if (nuevaAlta.isEmpty()) {
-                        mostrarAlerta("El límite de arriba ya está muy cerca de la palabra secreta.", Alert.AlertType.INFORMATION);
-                    } else {
-                        juego.setPalabraAlta(nuevaAlta);
-                        cuadrosPalabraAlta.getChildren().setAll(crearFilaLimite(nuevaAlta).getChildren());
-                        juego.setPistaUsada(true);
-                        btnPista.setDisable(true);
-                        mostrarAlerta("Nuevo límite alto: " + nuevaAlta.toUpperCase(), Alert.AlertType.INFORMATION);
-                    }
-                    break;
-
-                case "Mostrar primera letra":
-                    char primeraLetra = juego.getPalabraSecreta().charAt(0);
+            if (opcion.equals(cadenaOpc1)) {
+                if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
+                    mostrarAlerta(cadenaBajaCerca, Alert.AlertType.INFORMATION);
+                    return;
+                }
+                String nuevaBaja = juego.recorrerLimites(diccionario, false);
+                if (nuevaBaja.isEmpty()) {
+                    mostrarAlerta(cadenaBajaCerca, Alert.AlertType.INFORMATION);
+                } else {
+                    juego.setPalabraBaja(nuevaBaja);
+                    cuadrosPalabraBaja.getChildren().setAll(crearFilaLimite(nuevaBaja).getChildren());
                     juego.setPistaUsada(true);
                     btnPista.setDisable(true);
-                    mostrarAlerta("La palabra secreta empieza con: " + Character.toUpperCase(primeraLetra), Alert.AlertType.INFORMATION);
-                    break;
+                    mostrarAlerta(cadenaNuevoBajo + nuevaBaja.toUpperCase(), Alert.AlertType.INFORMATION);
+                }
+
+            } else if (opcion.equals(cadenaOpc2)) {
+                if (juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
+                    mostrarAlerta(cadenaSinPistaAun, Alert.AlertType.INFORMATION);
+                    return;
+                }
+                String nuevaAlta = juego.recorrerLimites(diccionario, true);
+                if (nuevaAlta.isEmpty()) {
+                    mostrarAlerta(cadenaAltaCerca, Alert.AlertType.INFORMATION);
+                } else {
+                    juego.setPalabraAlta(nuevaAlta);
+                    cuadrosPalabraAlta.getChildren().setAll(crearFilaLimite(nuevaAlta).getChildren());
+                    juego.setPistaUsada(true);
+                    btnPista.setDisable(true);
+                    mostrarAlerta(cadenaNuevoAlto + nuevaAlta.toUpperCase(), Alert.AlertType.INFORMATION);
+                }
+
+            } else if (opcion.equals(cadenaOpc3)) {
+                char primeraLetra = juego.getPalabraSecreta().charAt(0);
+                juego.setPistaUsada(true);
+                btnPista.setDisable(true);
+                mostrarAlerta(cadenaPrimeraLetra + Character.toUpperCase(primeraLetra), Alert.AlertType.INFORMATION);
             }
+
             calcularDistancias(limiteInicial, limiteFinal);
             actualizarTeclado();
         });
@@ -699,29 +725,26 @@ public class GUIBetweenle extends Application {
         char cAltaPos = juego.getPalabraAlta().charAt(pos);
 
         if (dentroRangoBaja && dentroRangoAlta) {
-            // Caso 1: prefijo igual en ambas → rango entre las dos letras
             primeraLetra = cBajaPos;
             ultimaLetra = cAltaPos;
         } else if (dentroRangoBaja) {
-            // Caso 2: pegado al límite bajo → desde letra de baja hasta z
+            // caso 2
             primeraLetra = cBajaPos;
             ultimaLetra = 'z';
         } else if (dentroRangoAlta) {
-            // Caso 3: pegado al límite alto → desde a hasta letra de alta
+            // caso 3, basicamente es alreves jeje
             primeraLetra = 'a';
             ultimaLetra = cAltaPos;
         } else {
-            // Verificar si el prefijo escrito está dentro del rango
-            // comparando lexicográficamente con palabraBaja y palabraAlta
+            // En caso de que no se cumplan los 3 primeros casos
             boolean dentroDeRango = textoActual.compareTo(juego.getPalabraBaja()) > 0 &&
                     textoActual.compareTo(juego.getPalabraAlta()) < 0;
-
+            // Si esta de todas formas dentro del rango, no hay problema
             if (dentroDeRango) {
-                // Dentro del rango → cualquier letra es válida
                 primeraLetra = 'a';
                 ultimaLetra = 'z';
             } else {
-                // Fuera del rango → todo inválido
+                // Si se sale del rango gg
                 primeraLetra = (char) ('z' + 1);
                 ultimaLetra = (char) ('a' - 1);
             }
@@ -743,6 +766,5 @@ public class GUIBetweenle extends Application {
 
         tecladoRangos.getChildren().addAll(fila1, fila2);
     }
-
 
 }

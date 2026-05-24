@@ -10,31 +10,21 @@
 }
 
 .label-titulo {
-    -fx-font-size: 22px;
+    -fx-font-size: 40px;
     -fx-font-weight: bold;
-    -fx-text-fill: #dddde5;
+    -fx-text-fill: #ffffff;
 }
 
 .label-intentos-top {
-    -fx-font-size: 13px;
-    -fx-text-fill: #888888;
+    -fx-font-size: 24px;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
     -fx-padding: 6 0 2 0;
 }
 
-
 .label-approx {
-    -fx-font-size: 12px;
-    -fx-text-fill: #777777;
-}
-
-.scroll-historial {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: transparent;
-}
-
-.scroll-historial .viewport {
-    -fx-background-color: transparent;
+    -fx-font-size: 14px;
+    -fx-text-fill: #ffffff;
 }
 
 .celda-letra {
@@ -49,39 +39,15 @@
     -fx-background-radius: 6;
 }
 
-.celda-correcto {
-    -fx-background-color: #538d4e;
-    -fx-text-fill: white;
-}
-
-.celda-bajo {
-    -fx-background-color: #4A90D9;
-    -fx-text-fill: white;
-}
-
-.celda-alto {
-    -fx-background-color: #c9a84c;
-    -fx-text-fill: white;
-}
+.celda-correcto { -fx-background-color: #538d4e; -fx-text-fill: white; }
+.celda-bajo     { -fx-background-color: #4A90D9; -fx-text-fill: white; }
+.celda-alto     { -fx-background-color: #c9a84c; -fx-text-fill: white; }
 
 .seccion-entrada {
     -fx-background-color: #041712;
     -fx-border-color: #041712;
     -fx-border-width: 1 0 0 0;
     -fx-padding: 14 20 14 20;
-}
-
-.campo-texto {
-    -fx-font-size: 15px;
-    -fx-padding: 8 12 8 12;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #041712;
-    -fx-border-width: 1.5;
-}
-
-.campo-texto:focused {
-    -fx-border-color: #4A90D9;
 }
 
 .btn-adivinar {
@@ -93,14 +59,8 @@
     -fx-background-radius: 8;
     -fx-cursor: hand;
 }
-
-.btn-adivinar:hover {
-    -fx-background-color: #10da75;
-}
-
-.btn-adivinar:disabled {
-    -fx-background-color: #aaaaaa;
-}
+.btn-adivinar:hover    { -fx-background-color: #10da75; }
+.btn-adivinar:disabled { -fx-background-color: #aaaaaa; }
 
 .celda-limite {
     -fx-background-color: #09d98a;
@@ -128,15 +88,10 @@
 }
 
 .button-shape {
-    -fx-background-color: #1a1a2e;
+    -fx-background-color: #37ead0;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
-    -fx-cursor: hand;
-}
-
-.button-shape:hover {
-    -fx-background-color: #2e2e4e;
+    -fx-font-size: 20px;
 }
 
 .btn-pista {
@@ -148,20 +103,9 @@
     -fx-background-radius: 8;
     -fx-cursor: hand;
 }
+.btn-pista:hover    { -fx-background-color: #c8880a; }
+.btn-pista:disabled { -fx-background-color: #aaaaaa; }
 
-.btn-pista:hover {
-    -fx-background-color: #c8880a;
-}
-
-.btn-pista:disabled {
-    -fx-background-color: #aaaaaa;
-}
-
-.label-subtitulo {
-    -fx-font-size: 14px;
-    -fx-text-fill: #888888;
-    -fx-padding: 0 0 20 0;
-}
 .btn-menu {
     -fx-background-color: #27d983;
     -fx-text-fill: white;
@@ -173,18 +117,46 @@
     -fx-cursor: hand;
 }
 .btn-menu:hover  { -fx-background-color: #14f199; }
-.btn-salir       { -fx-background-color: #D9277D; }
-.btn-salir:hover { -fx-background-color: #F1146C; }
+.btn-salir       { -fx-background-color: #5808b9; }
+.btn-salir:hover { -fx-background-color: #490fa6; }
 
 .label-config {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #ffffff;
 }
+
 .radio-config {
     -fx-font-size: 13px;
     -fx-text-fill: #ffffff;
 }
+
+.slider .track {
+    -fx-background-color: #2de79f;
+    -fx-background-radius: 4;
+    -fx-pref-height: 6px;
+}
+
+.slider .thumb {
+    -fx-background-color: #09d98a;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-effect: dropshadow(gaussian, rgba(9,217,138,0.5), 6, 0, 0, 0);
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #14f199;
+}
+
+.slider .axis {
+    -fx-tick-label-fill: #ffffff;
+    -fx-font-size: 11px;
+}
+
+.slider:disabled .track { -fx-background-color: #555555; }
+.slider:disabled .thumb { -fx-background-color: #777777; -fx-effect: none; }
+
 
 .tecla-letra {
     -fx-min-width: 26px;
@@ -197,11 +169,15 @@
     -fx-background-radius: 4;
     -fx-font-family: "Consolas", "Courier New", monospace;
 }
+
 .tecla-valida {
-    -fx-background-color: #4A90D9;
+    -fx-background-color: #6640ce;
     -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
+
 .tecla-invalida {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #888888;
+    -fx-background-color: #9e98ab;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
 }

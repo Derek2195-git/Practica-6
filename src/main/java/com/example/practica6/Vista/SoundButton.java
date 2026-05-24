@@ -16,7 +16,7 @@ public class SoundButton extends Button {
             String audioUrl = getClass().getResource(rutaSonido).toExternalForm();
             sonido = new AudioClip(audioUrl);
 
-            addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+            addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
                 if (sonido != null) {
                     sonido.play();
                 }
