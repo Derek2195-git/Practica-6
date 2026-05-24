@@ -73,7 +73,7 @@ public class GUIBetweenle extends Application {
 
         ToggleGroup grupoIdioma = new ToggleGroup();
         RadioButton rbEspanol = new RadioButton("Español");
-        RadioButton rbIngles  = new RadioButton("Inglés");
+        RadioButton rbIngles = new RadioButton("Inglés");
         rbEspanol.setToggleGroup(grupoIdioma);
         rbIngles.setToggleGroup(grupoIdioma);
         rbEspanol.setSelected(true);
@@ -87,8 +87,8 @@ public class GUIBetweenle extends Application {
         labelDificultad.getStyleClass().add("label-config");
 
         ToggleGroup grupoDificultad = new ToggleGroup();
-        RadioButton rbFacil  = new RadioButton("Fácil (5 letras)");
-        RadioButton rbMedio  = new RadioButton("Medio (6 letras)");
+        RadioButton rbFacil = new RadioButton("Fácil (5 letras)");
+        RadioButton rbMedio = new RadioButton("Medio (6 letras)");
         RadioButton rbCustom = new RadioButton("Personalizado:");
         rbFacil.setToggleGroup(grupoDificultad);
         rbMedio.setToggleGroup(grupoDificultad);
@@ -98,20 +98,19 @@ public class GUIBetweenle extends Application {
         rbMedio.getStyleClass().add("radio-config");
         rbCustom.getStyleClass().add("radio-config");
 
-        TextField campoPalabra = new TextField();
-        campoPalabra.setPromptText("Longitud (3-12)");
-        campoPalabra.setPrefWidth(120);
-        campoPalabra.getStyleClass().add("campo-texto");
-        campoPalabra.setDisable(true);
+        Slider sliderLongitud = new Slider(7, 14, 7);
+        sliderLongitud.setMajorTickUnit(1);
+        sliderLongitud.setMinorTickCount(0);
+        sliderLongitud.setSnapToTicks(true);
+        sliderLongitud.setShowTickLabels(true);
+        sliderLongitud.setPrefWidth(200);
+        sliderLongitud.setDisable(true);
 
-        rbCustom.setOnAction(e -> campoPalabra.setDisable(false));
-        rbFacil.setOnAction(e  -> campoPalabra.setDisable(true));
-        rbMedio.setOnAction(e  -> campoPalabra.setDisable(true));
+        rbCustom.setOnAction(e -> sliderLongitud.setDisable(false));
+        rbFacil.setOnAction(e -> sliderLongitud.setDisable(true));
+        rbMedio.setOnAction(e -> sliderLongitud.setDisable(true));
 
-        HBox filaCustom = new HBox(10, rbCustom, campoPalabra);
-        filaCustom.setAlignment(Pos.CENTER_LEFT);
-
-        VBox filaDificultad = new VBox(10, rbFacil, rbMedio, filaCustom);
+        VBox filaDificultad = new VBox(10, rbFacil, rbMedio, rbCustom, sliderLongitud);
         filaDificultad.setAlignment(Pos.CENTER);
 
         // ── OPCIONES INTENTOS ─────────────────────────────────────
@@ -134,7 +133,7 @@ public class GUIBetweenle extends Application {
         filaIntentos.setAlignment(Pos.CENTER);
 
         // ── BOTONES ───────────────────────────────────────────────
-        Button btnJugar  = new Button("Iniciar juego");
+        Button btnJugar = new Button("Iniciar juego");
         Button btnVolver = new Button("Volver");
         btnJugar.getStyleClass().add("btn-menu");
         btnVolver.getStyleClass().addAll("btn-menu", "btn-salir");
@@ -163,25 +162,16 @@ public class GUIBetweenle extends Application {
             esIngles = rbIngles.isSelected();
 
             // Leer longitud
-            if (rbFacil.isSelected())      longitud = 5;
+            if (rbFacil.isSelected()) longitud = 5;
             else if (rbMedio.isSelected()) longitud = 6;
             else {
-                try {
-                    longitud = Integer.parseInt(campoPalabra.getText().trim());
-                    if (longitud < 7 || longitud > 14) {
-                        mostrarAlerta("La longitud debe estar entre 7 y 14.", Alert.AlertType.WARNING);
-                        return;
-                    }
-                } catch (NumberFormatException ex) {
-                    mostrarAlerta("Ingresa un número válido para la longitud.", Alert.AlertType.WARNING);
-                    return;
-                }
+                longitud = (int) sliderLongitud.getValue();
             }
 
             // Leer intentos
-            if (rb14.isSelected())      intentos = 14;
+            if (rb14.isSelected()) intentos = 14;
             else if (rb12.isSelected()) intentos = 12;
-            else                        intentos = 10;
+            else intentos = 10;
 
             // Arrancar juego con los valores guardados en los campos
             crearVentanaJuego(stage);
@@ -204,6 +194,17 @@ public class GUIBetweenle extends Application {
         juego = new Betweenle("Aptos", intentos);
         //juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
 
+        // Oh boy, espero que no pase nada en la vista la cual no me haga arrepentirme de cada segundo programando esto :D
+        String cadenaIntentos = esIngles ? "Attempts: " : "Intento: ";
+        String cadenaAdivinar = esIngles ? "Take a guess" : "Adivinar";
+        String cadenaPista = esIngles ? "Hint" : "Pista";
+        String cadenaMenuConfirm = esIngles ? "Go back to menu? Your current game will be lost."
+                : "¿Deseas volver al menú? Tu partida actual se borrará.";
+        String cadenaSiNo1 = esIngles ? "Yes" : "Sí";
+        String cadenaSiNo2 = "No";
+        String errorCSS = esIngles ? "Estilos.css file not found. Check your resources folder."
+                : "No se encontró el archivo estilos.css. Verifica que esté en la carpeta resources correcta.";
+
         VBox contenedorVertical = new VBox(0);
         contenedorVertical.getStyleClass().add("fondo-betweenle");
 
@@ -214,7 +215,7 @@ public class GUIBetweenle extends Application {
         Label labelTitulo = new Label("BETWEENLE");
         labelTitulo.getStyleClass().add("label-titulo");
 
-        labelIntentos = new Label("Intentos: " + intentos + "/" + intentos);
+        labelIntentos = new Label(cadenaIntentos + intentos + "/" + intentos);
         labelIntentos.getStyleClass().add("label-intentos-top");
 
         Region espacio1 = new Region();
@@ -222,8 +223,8 @@ public class GUIBetweenle extends Application {
         HBox.setHgrow(espacio1, Priority.ALWAYS);
         HBox.setHgrow(espacio2, Priority.ALWAYS);
 
-        ImageButton btnMenu = new ImageButton("/com/example/practica6/menu.png",64,64);
-        ImageButton btnStats = new ImageButton( "/com/example/practica6/estadisticas.png",64,64);
+        ImageButton btnMenu = new ImageButton("/com/example/practica6/menu.png", 64, 64);
+        ImageButton btnStats = new ImageButton("/com/example/practica6/estadisticas.png", 64, 64);
 
         topBar.getChildren().addAll(btnMenu, espacio1, labelTitulo, espacio2, btnStats);
 
@@ -288,17 +289,17 @@ public class GUIBetweenle extends Application {
 
         tecladoRangos = new VBox(6);
         tecladoRangos.setAlignment(Pos.CENTER);
-        tecladoRangos.setPadding(new Insets (8, 0, 8, 0));
+        tecladoRangos.setPadding(new Insets(8, 0, 8, 0));
         actualizarTeclado();
 
         HBox seccionBoton = new HBox();
         seccionBoton.setAlignment(Pos.CENTER);
         seccionBoton.getStyleClass().add("seccion-entrada");
 
-        SoundButton btnAdivinar = new SoundButton("Adivinar", "/com/example/practica6/mob.mp3");
+        SoundButton btnAdivinar = new SoundButton(cadenaAdivinar, "/com/example/practica6/mob.mp3");
         btnAdivinar.getStyleClass().add("btn-adivinar");
 
-        ImageButton btnPista = new ImageButton("Pista", "/com/example/practica6/prueba.png");
+        ImageButton btnPista = new ImageButton(cadenaPista, "/com/example/practica6/prueba.png");
         btnPista.getStyleClass().add("btn-pista");
         seccionBoton.getChildren().addAll(btnAdivinar, btnPista);
 
@@ -308,11 +309,11 @@ public class GUIBetweenle extends Application {
         contenedorVertical.getChildren().addAll(topBar, labelIntentos, seccionCentral, tecladoRangos, seccionBoton);
 
         int anchoCelda = 44;   // ancho de cada celda
-        int espaciado  = 6;    // spacing del HBox
-        int padding    = 60;   // padding lateral de la sección central
+        int espaciado = 6;    // spacing del HBox
+        int padding = 60;   // padding lateral de la sección central
         int anchoAprox = 70;   // espacio del bloque de aproximación
 
-        int anchoMinimo  = 480;
+        int anchoMinimo = 480;
         int anchoCalculado = (anchoCelda * longitud) + (espaciado * (longitud - 1)) + (anchoAprox * 2) + padding;
         int anchoVentana = Math.max(anchoMinimo, anchoCalculado);
 
@@ -321,7 +322,7 @@ public class GUIBetweenle extends Application {
         try {
             scene.getStylesheets().add(getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
         } catch (NullPointerException e) {
-            System.out.println("No se encontró el archivo estilos.css. Verifica que esté en la carpeta resources correcta.");
+            System.out.println(errorCSS);
         }
 
         scene.setOnKeyPressed(e -> {
@@ -358,8 +359,11 @@ public class GUIBetweenle extends Application {
             Alert confirmacionMenu = new Alert(Alert.AlertType.CONFIRMATION);
             confirmacionMenu.setTitle(null);
             confirmacionMenu.setHeaderText(null);
-            confirmacionMenu.setContentText("¿Deseas volver al menú? Tu partida actual se borrará.");
-            confirmacionMenu.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            confirmacionMenu.setContentText(cadenaMenuConfirm);
+
+            ButtonType btnSi = new ButtonType(cadenaSiNo1);
+            ButtonType btnNo = new ButtonType(cadenaSiNo2);
+            confirmacionMenu.getButtonTypes().setAll(btnSi, btnNo);
 
             boolean agregar = confirmacionMenu.showAndWait()
                     .map(tipo -> tipo == ButtonType.YES)
@@ -382,7 +386,6 @@ public class GUIBetweenle extends Application {
             usarPista(btnPista);
             scene.getRoot().requestFocus();
         });
-
 
 
         stage.setTitle("Betweenle");
@@ -416,9 +419,9 @@ public class GUIBetweenle extends Application {
         fila.setAlignment(Pos.CENTER);
 
         String estilo;
-        if (resultado == 0)       estilo = "celda-correcto";
+        if (resultado == 0) estilo = "celda-correcto";
         else if (resultado == -1) estilo = "celda-bajo";
-        else                      estilo = "celda-alto";
+        else estilo = "celda-alto";
 
         for (char c : palabra.toUpperCase().toCharArray()) {
             Label celda = new Label(String.valueOf(c));
@@ -477,7 +480,7 @@ public class GUIBetweenle extends Application {
 
         if (resultado == 2) {
             mostrarAlerta("La palabra introducida está fuera del rango actual. " +
-                    "Introduce una palabra que se ubique *despues* de " + juego.getPalabraBaja().toUpperCase(),
+                            "Introduce una palabra que se ubique *despues* de " + juego.getPalabraBaja().toUpperCase(),
                     Alert.AlertType.INFORMATION);
             return;
         }
@@ -511,7 +514,7 @@ public class GUIBetweenle extends Application {
         labelIntentos.setText("Intentos: " + juego.getIntentosRestantes() + "/" + juego.getIntentosTotales());
 
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
-        String limiteFinal   = "z".repeat(juego.getPalabraSecreta().length());
+        String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
 
         calcularDistancias(limiteInicial, limiteFinal);
         actualizarTeclado();
@@ -579,26 +582,45 @@ public class GUIBetweenle extends Application {
     }
 
     private void usarPista(Button btnPista) {
+        String cadenaGanaste = esIngles ? "Congratulations, you won! The word was: "
+                : "Felicidades, Ganaste el juego! La palabra era: ";
+        String cadenaPerdiste = esIngles ? "Game over! The secret word was: "
+                : "El jugador se quedó sin intentos. La palabra secreta era ";
+
+
+        String cadenaPistaUsada = esIngles ? "You already used your hint. Take a guess, I believe in you."
+                : "Ya usaste tu pista en esta partida.";
+        String cadenaEligePista = esIngles ? "Choose your hint:" : "Elige tu pista:";
+        String cadenaOpc1 = esIngles ? "Move upper limit" : "Recorrer límite alto";
+        String cadenaOpc2 = esIngles ? "Move lower limit" : "Recorrer límite bajo";
+        String cadenaOpc3 = esIngles ? "Show first letter" : "Mostrar primera letra";
+        String cadenaBajaCerca       = esIngles ? "The lower limit is already very close to the secret word." : "El límite de abajo ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoBajo       = esIngles ? "New lower limit: " : "Nuevo límite bajo: ";
+        String cadenaSinPistaAun     = esIngles ? "Cannot give a hint yet, limits are still at starting positions." : "No se puede dar una pista aún, los límites siguen siendo los iniciales.";
+        String cadenaAltaCerca       = esIngles ? "The upper limit is already very close to the secret word." : "El límite de arriba ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoAlto       = esIngles ? "New upper limit: " : "Nuevo límite alto: ";
+        String cadenaPrimeraLetra    = esIngles ? "The secret word starts with: " : "La palabra secreta empieza con: ";
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
-        String limiteFinal   = "z".repeat(juego.getPalabraSecreta().length());
+        String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
 
         if (juego.isPistaUsada()) {
-            mostrarAlerta("Ya usaste tu pista en esta partida.", Alert.AlertType.WARNING);
+            mostrarAlerta(cadenaPistaUsada, Alert.AlertType.WARNING);
             return;
         }
 
         // Diálogo con las 3 opciones
         ChoiceDialog<String> dialogo = new ChoiceDialog<>(
                 "Recorrer límite alto",
-                "Recorrer límite alto",
-                "Recorrer límite bajo",
-                "Mostrar primera letra"
+                cadenaOpc1,
+                cadenaOpc2,
+                cadenaOpc3
         );
         dialogo.setTitle("Pista");
         dialogo.setHeaderText(null);
-        dialogo.setContentText("Elige tu pista:");
+        dialogo.setContentText(cadenaEligePista);
 
         dialogo.showAndWait().ifPresent(opcion -> {
+
             switch (opcion) {
                 case "Recorrer límite alto":
                     if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
@@ -658,7 +680,7 @@ public class GUIBetweenle extends Application {
         int pos = Math.min(textoActual.length(), juego.getPalabraBaja().length() - 1);
 
         char primeraLetra = 'a';
-        char ultimaLetra  = 'z';
+        char ultimaLetra = 'z';
 
         // Analizar letra por letra hasta pos para saber en qué caso estamos
         boolean dentroRangoBaja = true;  // el prefijo escrito == palabraBaja hasta aquí
@@ -666,8 +688,8 @@ public class GUIBetweenle extends Application {
 
         for (int i = 0; i < pos; i++) {
             char escrita = i < textoActual.length() ? textoActual.charAt(i) : 0;
-            char cBaja   = juego.getPalabraBaja().charAt(i);
-            char cAlta   = juego.getPalabraAlta().charAt(i);
+            char cBaja = juego.getPalabraBaja().charAt(i);
+            char cAlta = juego.getPalabraAlta().charAt(i);
 
             if (escrita != cBaja) dentroRangoBaja = false;
             if (escrita != cAlta) dentroRangoAlta = false;
@@ -679,15 +701,15 @@ public class GUIBetweenle extends Application {
         if (dentroRangoBaja && dentroRangoAlta) {
             // Caso 1: prefijo igual en ambas → rango entre las dos letras
             primeraLetra = cBajaPos;
-            ultimaLetra  = cAltaPos;
+            ultimaLetra = cAltaPos;
         } else if (dentroRangoBaja) {
             // Caso 2: pegado al límite bajo → desde letra de baja hasta z
             primeraLetra = cBajaPos;
-            ultimaLetra  = 'z';
+            ultimaLetra = 'z';
         } else if (dentroRangoAlta) {
             // Caso 3: pegado al límite alto → desde a hasta letra de alta
             primeraLetra = 'a';
-            ultimaLetra  = cAltaPos;
+            ultimaLetra = cAltaPos;
         } else {
             // Verificar si el prefijo escrito está dentro del rango
             // comparando lexicográficamente con palabraBaja y palabraAlta
@@ -697,11 +719,11 @@ public class GUIBetweenle extends Application {
             if (dentroDeRango) {
                 // Dentro del rango → cualquier letra es válida
                 primeraLetra = 'a';
-                ultimaLetra  = 'z';
+                ultimaLetra = 'z';
             } else {
                 // Fuera del rango → todo inválido
-                primeraLetra = (char)('z' + 1);
-                ultimaLetra  = (char)('a' - 1);
+                primeraLetra = (char) ('z' + 1);
+                ultimaLetra = (char) ('a' - 1);
             }
         }
 
@@ -716,7 +738,7 @@ public class GUIBetweenle extends Application {
             }
 
             if (c <= 'm') fila1.getChildren().add(tecla);
-            else          fila2.getChildren().add(tecla);
+            else fila2.getChildren().add(tecla);
         }
 
         tecladoRangos.getChildren().addAll(fila1, fila2);
