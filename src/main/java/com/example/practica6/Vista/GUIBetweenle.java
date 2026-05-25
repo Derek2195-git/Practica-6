@@ -206,6 +206,7 @@ public class GUIBetweenle extends Application {
         }
 
         stage.setScene(scene);
+        stage.setOnShown(e -> scene.getRoot().requestFocus());
         stage.show();
     }
 
@@ -217,6 +218,7 @@ public class GUIBetweenle extends Application {
         diccionario = new Diccionario(esIngles);
         //juego = new Betweenle("Awful", intentos);
         juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
+        textoActual = "";
         // Textos traducidos
         String cadenaIntentos = esIngles ? "Attempts: " : "Intento: ";
         String cadenaAdivinar = esIngles ? "Take a guess" : "Adivinar";
@@ -431,6 +433,7 @@ public class GUIBetweenle extends Application {
         stage.setTitle("Betweenle");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setOnShown(e -> scene.getRoot().requestFocus());
         stage.show();
     }
 
@@ -461,6 +464,12 @@ public class GUIBetweenle extends Application {
         alerta.setTitle(null);
         alerta.setHeaderText(null);
         alerta.setContentText(texto);
+        javafx.application.Platform.runLater(() ->
+                javafx.stage.Window.getWindows().stream()
+                        .filter(javafx.stage.Window::isShowing)
+                        .findFirst()
+                        .ifPresent(w -> w.getScene().getRoot().requestFocus())
+        );
         alerta.showAndWait();
     }
 
@@ -539,6 +548,12 @@ public class GUIBetweenle extends Application {
             confirmacion.setTitle(null);
             confirmacion.setHeaderText(null);
             confirmacion.setContentText(cadenaNoEnDic);
+            javafx.application.Platform.runLater(() ->
+                    javafx.stage.Window.getWindows().stream()
+                            .filter(javafx.stage.Window::isShowing)
+                            .findFirst()
+                            .ifPresent(w -> w.getScene().getRoot().requestFocus())
+            );
 
             ButtonType btnSi = new ButtonType(cadenaSi);
             ButtonType btnNo = new ButtonType("No");
@@ -718,11 +733,11 @@ public class GUIBetweenle extends Application {
         dialogo.showAndWait().ifPresent(opcion -> {
 
             if (opcion.equals(cadenaOpc1)) {
+                String nuevaBaja = juego.recorrerLimites(diccionario, false);
                 if (juego.getPalabraBaja().equalsIgnoreCase(limiteInicial)) {
-                    mostrarAlerta(cadenaBajaCerca, Alert.AlertType.INFORMATION);
+                    mostrarAlerta(cadenaSinPistaAun, Alert.AlertType.INFORMATION);
                     return;
                 }
-                String nuevaBaja = juego.recorrerLimites(diccionario, false);
                 if (nuevaBaja.isEmpty()) {
                     mostrarAlerta(cadenaBajaCerca, Alert.AlertType.INFORMATION);
                 } else {
@@ -734,11 +749,11 @@ public class GUIBetweenle extends Application {
                 }
 
             } else if (opcion.equals(cadenaOpc2)) {
+                String nuevaAlta = juego.recorrerLimites(diccionario, true);
                 if (juego.getPalabraAlta().equalsIgnoreCase(limiteFinal)) {
                     mostrarAlerta(cadenaSinPistaAun, Alert.AlertType.INFORMATION);
                     return;
                 }
-                String nuevaAlta = juego.recorrerLimites(diccionario, true);
                 if (nuevaAlta.isEmpty()) {
                     mostrarAlerta(cadenaAltaCerca, Alert.AlertType.INFORMATION);
                 } else {

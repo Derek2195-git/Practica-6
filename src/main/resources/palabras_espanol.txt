@@ -9365,6 +9365,7 @@ aulaga
 aulagar
 aulario
 aulico
+aulla:de aullar
 aulladero
 aullador
 aullar
@@ -25487,6 +25488,7 @@ derechuelo
 derechura
 derechureramente
 derechurero
+derek:mi nombre :d
 derelinquir
 derezar
 deriva
