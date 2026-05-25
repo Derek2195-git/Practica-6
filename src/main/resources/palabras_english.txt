@@ -11089,6 +11089,7 @@ cut
 cutaneous
 cutback
 cute
+cuter:definition
 cutest
 cutlass
 cutlet
@@ -35554,6 +35555,7 @@ sallies
 sallow
 sally
 sallying
+salmo:definition
 salmon
 salon
 salons
@@ -35918,6 +35920,7 @@ scheming
 schiller
 schism
 schizophrenia
+schizophrenic:schizo
 schlesinger
 schlitz
 schloss
@@ -38115,7 +38118,7 @@ son
 sonar
 sonata
 sonenberg
-sones:Bro what are these words 🥀
+sones:bro what are these words 🥀
 song
 songbook
 songs

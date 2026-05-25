@@ -18,7 +18,6 @@ public class ShapeButton extends Button {
         super(texto);
         switch (opcion) {
             case 0 -> {
-                // Esto definitivamente entra a mi top de perdidas de tiempo, rip
                 Circle formaCircular = new Circle(radio);
                 setShape(formaCircular);
                 setMinSize(radio * 2, radio * 2);

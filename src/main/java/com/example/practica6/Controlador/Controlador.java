@@ -14,7 +14,8 @@ public class Controlador {
 
     public static void main(String[] args) {
         Application.launch(GUIBetweenle.class, args);
-
+        //Controlador controlador = new Controlador();
+        //controlador.iniciarJuego();
     }
 
 

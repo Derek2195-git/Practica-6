@@ -9779,7 +9779,6 @@ avuguero
 avulsion
 avutarda
 avutardado
-awful:this si awful
 ax
 axial
 axil
@@ -11155,6 +11154,7 @@ beber
 bebercio
 beberia
 beberron
+bebes:plural de bebes
 bebestible
 bebible
 bebido
@@ -12068,6 +12068,7 @@ bocanada
 bocarada
 bocarda
 bocarte
+bocas:plural de boca
 bocata
 bocateja
 bocatijera
