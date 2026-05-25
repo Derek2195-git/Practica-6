@@ -49138,6 +49138,7 @@ locomotor
 locomotriz
 locomovible
 locomovil
+locos:Plural de loco
 locrio
 locro
 locuacidad
@@ -72113,7 +72114,7 @@ talacho
 talador
 taladrado
 taladrador
-taladrando:Accion de taladrar
+taladrando:accion de taladrar
 taladrar
 taladrilla
 taladro

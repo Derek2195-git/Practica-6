@@ -31,6 +31,7 @@ public class GUIBetweenle extends Application {
 
     @Override
     public void start(Stage stage) {
+        iniciarMusica();
         Label titulo = new Label("BETWEENLE");
         titulo.getStyleClass().add("label-titulo");
 
@@ -308,7 +309,7 @@ public class GUIBetweenle extends Application {
         seccionBoton.setAlignment(Pos.CENTER);
         seccionBoton.getStyleClass().add("seccion-entrada");
 
-        SoundButton btnAdivinar = new SoundButton(cadenaAdivinar, "/com/example/practica6/mob.mp3");
+        SoundButton btnAdivinar = new SoundButton(cadenaAdivinar, "/com/example/practica6/sonidoClick.mp3");
         btnAdivinar.getStyleClass().add("btn-adivinar");
 
         ImageButton btnPista = new ImageButton(cadenaPista, "/com/example/practica6/prueba.png");
@@ -611,10 +612,6 @@ public class GUIBetweenle extends Application {
     }
 
     private void usarPista(Button btnPista) {
-        String cadenaGanaste = esIngles ? "Congratulations, you won! The word was: "
-                : "Felicidades, Ganaste el juego! La palabra era: ";
-        String cadenaPerdiste = esIngles ? "Game over! The secret word was: "
-                : "El jugador se quedó sin intentos. La palabra secreta era ";
 
 
         String cadenaPistaUsada = esIngles ? "You already used your hint. Take a guess, I believe in you."
@@ -623,11 +620,11 @@ public class GUIBetweenle extends Application {
         String cadenaOpc1 = esIngles ? "Move upper limit" : "Recorrer límite alto";
         String cadenaOpc2 = esIngles ? "Move lower limit" : "Recorrer límite bajo";
         String cadenaOpc3 = esIngles ? "Show first letter" : "Mostrar primera letra";
-        String cadenaBajaCerca       = esIngles ? "The lower limit is already very close to the secret word." : "El límite de abajo ya está muy cerca de la palabra secreta.";
-        String cadenaNuevoBajo       = esIngles ? "New lower limit: " : "Nuevo límite bajo: ";
+        String cadenaBajaCerca       = esIngles ? "The upper limit is already very close to the secret word." : "El límite de arriba ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoBajo       = esIngles ? "New upper limit: " : "Nuevo límite alto: ";
         String cadenaSinPistaAun     = esIngles ? "Cannot give a hint yet, limits are still at starting positions." : "No se puede dar una pista aún, los límites siguen siendo los iniciales.";
-        String cadenaAltaCerca       = esIngles ? "The upper limit is already very close to the secret word." : "El límite de arriba ya está muy cerca de la palabra secreta.";
-        String cadenaNuevoAlto       = esIngles ? "New upper limit: " : "Nuevo límite alto: ";
+        String cadenaAltaCerca       = esIngles ? "The lower limit is already very close to the secret word." : "El límite de abajo ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoAlto       = esIngles ? "New lower limit: " : "Nuevo límite bajo: ";
         String cadenaPrimeraLetra    = esIngles ? "The secret word starts with: " : "La palabra secreta empieza con: ";
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
         String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
@@ -708,9 +705,9 @@ public class GUIBetweenle extends Application {
         char primeraLetra = 'a';
         char ultimaLetra = 'z';
 
-        // Analizar letra por letra hasta pos para saber en qué caso estamos
-        boolean dentroRangoBaja = true;  // el prefijo escrito == palabraBaja hasta aquí
-        boolean dentroRangoAlta = true;  // el prefijo escrito == palabraAlta hasta aquí
+        // Analizamos letra por letra hasta pos para saber en qué caso estamos
+        boolean dentroRangoBaja = true;
+        boolean dentroRangoAlta = true;
 
         for (int i = 0; i < pos; i++) {
             char escrita = i < textoActual.length() ? textoActual.charAt(i) : 0;
@@ -765,6 +762,23 @@ public class GUIBetweenle extends Application {
         }
 
         tecladoRangos.getChildren().addAll(fila1, fila2);
+    }
+
+    private void iniciarMusica() {
+        if (musicaFondo != null) return; // ya está sonando, no hacer nada
+
+        try {
+            javafx.scene.media.Media media = new javafx.scene.media.Media(
+                    getClass().getResource("/com/example/practica6/musicaFondo.mp3").toURI().toString()
+            );
+            musicaFondo = new javafx.scene.media.MediaPlayer(media);
+            musicaFondo.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+            musicaFondo.setVolume(0.1);
+            musicaFondo.setCycleCount(MediaPlayer.INDEFINITE);
+            musicaFondo.play();
+        } catch (Exception e) {
+            System.out.println("No se encontró el archivo de música.");
+        }
     }
 
 }

@@ -34594,7 +34594,7 @@ retriever
 retrievers
 retrieves
 retrieving
-retro:So retro
+retro:so retro
 retroactive
 retroactively
 retrofit
@@ -37450,6 +37450,7 @@ skill
 skilled
 skillet
 skillful
+skillfullness:Palabra que me invente al chile
 skillfully
 skillfulness
 skills
