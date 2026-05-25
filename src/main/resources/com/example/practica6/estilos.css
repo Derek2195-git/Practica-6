@@ -88,10 +88,28 @@
 }
 
 .button-shape {
-    -fx-background-color: #37ead0;
+    -fx-background-color: #ea373d;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 20px;
+}
+
+.estrella {
+    -fx-fill: #59dccd;
+    -fx-stroke: #06c277;
+    -fx-stroke-width: 2;
+}
+
+.circulo {
+    -fx-fill: #da1c1c;
+    -fx-stroke: rgba(94, 14, 14, 0.6);
+    -fx-stroke-width: 2;
+}
+
+.label-shape {
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-font-size: 9px;
 }
 
 .btn-pista {

@@ -9778,6 +9778,7 @@ avuguero
 avulsion
 avutarda
 avutardado
+awful:this si awful
 ax
 axial
 axil
@@ -10489,6 +10490,7 @@ banca
 bancada
 bancal
 bancalero
+bancanchat:johab momento
 bancario
 bancarrota
 bance
@@ -35013,6 +35015,7 @@ establia
 establir
 establo
 estabon
+estabonito:pero pues no se ve bonito 🗣
 estabulacion
 estabular
 estaca
@@ -49138,7 +49141,7 @@ locomotor
 locomotriz
 locomovible
 locomovil
-locos:Plural de loco
+locos:plural de loco
 locrio
 locro
 locuacidad
@@ -53846,6 +53849,7 @@ motorista
 motorizacion
 motorizado
 motorizar
+motosierra:gracias, hombre man. huh? por que eres un hombre man. oh, cierto.
 motoso
 motovelero
 motril

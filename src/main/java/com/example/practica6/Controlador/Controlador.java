@@ -3,7 +3,9 @@ package com.example.practica6.Controlador;
 
 import com.example.practica6.Modelo.Betweenle;
 import com.example.practica6.Modelo.Diccionario;
+import com.example.practica6.Vista.GUIBetweenle;
 import com.example.practica6.Vista.Vista;
+import javafx.application.Application;
 
 public class Controlador {
     private Diccionario diccionario;
@@ -11,9 +13,10 @@ public class Controlador {
     private Vista vista;
 
     public static void main(String[] args) {
-        Controlador controlador = new Controlador();
-        controlador.iniciarJuego();
+        Application.launch(GUIBetweenle.class, args);
+
     }
+
 
     public Controlador() {
         vista = new Vista();

@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
@@ -28,7 +29,10 @@ public class GUIBetweenle extends Application {
     private VBox tecladoRangos;
     private static MediaPlayer musicaFondo = null;
 
-
+    /**
+     * Crea la ventana del menú principal
+     * @param stage Ventana donde se mostrará el juego
+     */
     @Override
     public void start(Stage stage) {
         iniciarMusica();
@@ -41,11 +45,11 @@ public class GUIBetweenle extends Application {
         Button btnSalir = new Button("Salir");
         btnSalir.getStyleClass().addAll("btn-menu", "btn-salir");
 
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(40));
-        root.getStyleClass().add("fondo-betweenle");
-        root.getChildren().addAll(titulo, btnJugar, btnSalir);
+        VBox contenedorVertical = new VBox(20);
+        contenedorVertical.setAlignment(Pos.CENTER);
+        contenedorVertical.setPadding(new Insets(40));
+        contenedorVertical.getStyleClass().add("fondo-betweenle");
+        contenedorVertical.getChildren().addAll(titulo, btnJugar, btnSalir);
 
         btnJugar.setOnAction(e -> {
             try {
@@ -56,7 +60,7 @@ public class GUIBetweenle extends Application {
         });
         btnSalir.setOnAction(e -> stage.close());
 
-        Scene scene = new Scene(root, 480, 620);
+        Scene scene = new Scene(contenedorVertical, 480, 620);
         try {
             scene.getStylesheets().add(
                     getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
@@ -67,40 +71,45 @@ public class GUIBetweenle extends Application {
         stage.setTitle("Betweenle");
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setOnShown(event -> {scene.getRoot().requestFocus();});
+        stage.setOnShown(e -> scene.getRoot().requestFocus());
         stage.show();
     }
 
+    /**
+     * Crea la ventana de configuración del juego, los datos enviados aqui serán usados para la ventana de juego
+     * @param stage Ventana donde se mostró el menú principal
+     */
     public void crearVentanaConfiguracion(Stage stage) {
         Label labelIdioma = new Label("Idioma:");
         labelIdioma.getStyleClass().add("label-config");
 
         ToggleGroup grupoIdioma = new ToggleGroup();
-        RadioButton rbEspanol = new RadioButton("Español");
-        RadioButton rbIngles = new RadioButton("Inglés");
-        rbEspanol.setToggleGroup(grupoIdioma);
-        rbIngles.setToggleGroup(grupoIdioma);
-        rbEspanol.setSelected(true);
-        rbEspanol.getStyleClass().add("radio-config");
-        rbIngles.getStyleClass().add("radio-config");
+        RadioButton botonIdioma1 = new RadioButton("Español");
+        RadioButton botonIdioma2 = new RadioButton("Inglés");
+        botonIdioma1.setToggleGroup(grupoIdioma);
+        botonIdioma2.setToggleGroup(grupoIdioma);
+        botonIdioma1.setSelected(true);
+        botonIdioma1.getStyleClass().add("radio-config");
+        botonIdioma2.getStyleClass().add("radio-config");
 
-        HBox filaIdioma = new HBox(20, rbEspanol, rbIngles);
+        HBox filaIdioma = new HBox(20, botonIdioma1, botonIdioma2);
         filaIdioma.setAlignment(Pos.CENTER);
 
         Label labelDificultad = new Label("Longitud de la palabra:");
         labelDificultad.getStyleClass().add("label-config");
 
+        // Dificultad
         ToggleGroup grupoDificultad = new ToggleGroup();
-        RadioButton rbFacil = new RadioButton("Fácil (5 letras)");
-        RadioButton rbMedio = new RadioButton("Medio (6 letras)");
-        RadioButton rbCustom = new RadioButton("Personalizado:");
-        rbFacil.setToggleGroup(grupoDificultad);
-        rbMedio.setToggleGroup(grupoDificultad);
-        rbCustom.setToggleGroup(grupoDificultad);
-        rbFacil.setSelected(true);
-        rbFacil.getStyleClass().add("radio-config");
-        rbMedio.getStyleClass().add("radio-config");
-        rbCustom.getStyleClass().add("radio-config");
+        RadioButton botonFacil = new RadioButton("Fácil (5 letras)");
+        RadioButton botonIntermedio = new RadioButton("Medio (6 letras)");
+        RadioButton botonDificil = new RadioButton("Personalizado:");
+        botonFacil.setToggleGroup(grupoDificultad);
+        botonIntermedio.setToggleGroup(grupoDificultad);
+        botonDificil.setToggleGroup(grupoDificultad);
+        botonFacil.setSelected(true);
+        botonFacil.getStyleClass().add("radio-config");
+        botonIntermedio.getStyleClass().add("radio-config");
+        botonDificil.getStyleClass().add("radio-config");
 
         Slider sliderLongitud = new Slider(7, 14, 7);
         sliderLongitud.setMajorTickUnit(1);
@@ -111,56 +120,56 @@ public class GUIBetweenle extends Application {
         sliderLongitud.setDisable(true);
         sliderLongitud.setVisible(false);
 
-        rbCustom.setOnAction(e -> {
+        botonDificil.setOnAction(e -> {
             sliderLongitud.setDisable(false);
             sliderLongitud.setVisible(true);
         });
-        rbFacil.setOnAction(e -> {
+        botonFacil.setOnAction(e -> {
             sliderLongitud.setDisable(true);
             sliderLongitud.setVisible(false);
         });
-        rbMedio.setOnAction(e -> {
+        botonIntermedio.setOnAction(e -> {
             sliderLongitud.setDisable(true);
             sliderLongitud.setVisible(false);
         });
 
-        VBox filaDificultad = new VBox(10, rbFacil, rbMedio, rbCustom, sliderLongitud);
+        VBox filaDificultad = new VBox(10, botonFacil, botonIntermedio, botonDificil, sliderLongitud);
         filaDificultad.setAlignment(Pos.CENTER);
 
-        // ── OPCIONES INTENTOS ─────────────────────────────────────
+        // Intentos
         Label labelIntentos = new Label("Número de intentos:");
         labelIntentos.getStyleClass().add("label-config");
 
         ToggleGroup grupoIntentos = new ToggleGroup();
-        RadioButton rb14 = new RadioButton("14 intentos");
-        RadioButton rb12 = new RadioButton("12 intentos");
-        RadioButton rb10 = new RadioButton("10 intentos");
-        rb14.setToggleGroup(grupoIntentos);
-        rb12.setToggleGroup(grupoIntentos);
-        rb10.setToggleGroup(grupoIntentos);
-        rb14.setSelected(true);
-        rb14.getStyleClass().add("radio-config");
-        rb12.getStyleClass().add("radio-config");
-        rb10.getStyleClass().add("radio-config");
+        RadioButton botonIntentos1 = new RadioButton("14 intentos");
+        RadioButton botonIntentos2 = new RadioButton("12 intentos");
+        RadioButton botonIntentos3 = new RadioButton("10 intentos");
+        botonIntentos1.setToggleGroup(grupoIntentos);
+        botonIntentos2.setToggleGroup(grupoIntentos);
+        botonIntentos3.setToggleGroup(grupoIntentos);
+        botonIntentos1.setSelected(true);
+        botonIntentos1.getStyleClass().add("radio-config");
+        botonIntentos2.getStyleClass().add("radio-config");
+        botonIntentos3.getStyleClass().add("radio-config");
 
-        HBox filaIntentos = new HBox(20, rb14, rb12, rb10);
+        HBox filaIntentos = new HBox(20, botonIntentos1, botonIntentos2, botonIntentos3);
         filaIntentos.setAlignment(Pos.CENTER);
 
-        // ── BOTONES ───────────────────────────────────────────────
+        // Botones
         Button btnJugar = new Button("Iniciar juego");
         Button btnVolver = new Button("Volver");
         btnJugar.getStyleClass().add("btn-menu");
         btnVolver.getStyleClass().addAll("btn-menu", "btn-salir");
 
-        // ── LAYOUT ────────────────────────────────────────────────
+
         Label titulo = new Label("Configuración");
         titulo.getStyleClass().add("label-titulo");
 
-        VBox root = new VBox(24);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(40));
-        root.getStyleClass().add("fondo-betweenle");
-        root.getChildren().addAll(
+        VBox contenedorVertical = new VBox(24);
+        contenedorVertical.setAlignment(Pos.CENTER);
+        contenedorVertical.setPadding(new Insets(40));
+        contenedorVertical.getStyleClass().add("fondo-betweenle");
+        contenedorVertical.getChildren().addAll(
                 titulo,
                 labelIdioma, filaIdioma,
                 labelDificultad, filaDificultad,
@@ -168,34 +177,31 @@ public class GUIBetweenle extends Application {
                 btnJugar, btnVolver
         );
 
-        // ── ACCIONES ──────────────────────────────────────────────
+
+        // Eventos
         btnVolver.setOnAction(e -> start(stage));
 
         btnJugar.setOnAction(e -> {
-            // Leer idioma
-            esIngles = rbIngles.isSelected();
-
-            // Leer longitud
-            if (rbFacil.isSelected()) longitud = 5;
-            else if (rbMedio.isSelected()) longitud = 6;
+            // Configuracion
+            esIngles = botonIdioma2.isSelected();
+            if (botonFacil.isSelected()) longitud = 5;
+            else if (botonIntermedio.isSelected()) longitud = 6;
             else {
                 longitud = (int) sliderLongitud.getValue();
             }
 
-            // Leer intentos
-            if (rb14.isSelected()) intentos = 14;
-            else if (rb12.isSelected()) intentos = 12;
+            if (botonIntentos1.isSelected()) intentos = 14;
+            else if (botonIntentos2.isSelected()) intentos = 12;
             else intentos = 10;
 
-            // Arrancar juego con los valores guardados en los campos
             crearVentanaJuego(stage);
         });
 
-        Scene scene = new Scene(root, 480, 620);
+        Scene scene = new Scene(contenedorVertical, 480, 620);
         try {
             scene.getStylesheets().add(
                     getClass().getResource("/com/example/practica6/estilos.css").toExternalForm());
-        } catch (NullPointerException ex) {
+        } catch (Exception e) {
             System.out.println("No se encontró estilos.css");
         }
 
@@ -203,16 +209,21 @@ public class GUIBetweenle extends Application {
         stage.show();
     }
 
+    /**
+     * Crea la ventana del juego, aqui se comprobará si el juego debe traducirse en inglés antes de mostrarse
+     * @param stage Ventana donde se mostró el menú principal y la configuración
+     */
     public void crearVentanaJuego(Stage stage) {
         diccionario = new Diccionario(esIngles);
         //juego = new Betweenle("Awful", intentos);
         juego = new Betweenle(diccionario.getPalabraAleatoria(longitud), intentos);
-
+        // Textos traducidos
         String cadenaIntentos = esIngles ? "Attempts: " : "Intento: ";
         String cadenaAdivinar = esIngles ? "Take a guess" : "Adivinar";
         String cadenaPista = esIngles ? "Hint" : "Pista";
         String cadenaMenuConfirm = esIngles ? "Go back to menu? Your current game will be lost."
                 : "¿Deseas volver al menú? Tu partida actual se borrará.";
+
         String cadenaSiNo1 = esIngles ? "Yes" : "Sí";
         String cadenaSiNo2 = "No";
         String errorCSS = esIngles ? "Estilos.css file not found. Check your resources folder."
@@ -221,6 +232,7 @@ public class GUIBetweenle extends Application {
         VBox contenedorVertical = new VBox(0);
         contenedorVertical.getStyleClass().add("fondo-betweenle");
 
+        // Secion de arriba donde va el menu y estadisticas
         HBox topBar = new HBox();
         topBar.getStyleClass().add("top-bar");
         topBar.setAlignment(Pos.CENTER);
@@ -236,15 +248,29 @@ public class GUIBetweenle extends Application {
         HBox.setHgrow(espacio1, Priority.ALWAYS);
         HBox.setHgrow(espacio2, Priority.ALWAYS);
 
-        ImageButton btnMenu = new ImageButton("/com/example/practica6/menu.png", 64, 64);
-        ImageButton btnStats = new ImageButton("/com/example/practica6/estadisticas.png", 64, 64);
 
-        topBar.getChildren().addAll(btnMenu, espacio1, labelTitulo, espacio2, btnStats);
+        ImageButton btnMenu = new ImageButton("/com/example/practica6/menu.png", 64, 64);
+        VBox seccionMenu = new VBox(6);
+
+        seccionMenu.setAlignment(Pos.CENTER);
+        seccionMenu.getChildren().addAll(btnMenu);
+
+        ImageButton btnStats = new ImageButton("/com/example/practica6/estadisticas.png", 64, 64);
+        ShapeButton btnPista = new ShapeButton(cadenaPista, 15, 1);
+
+        VBox seccionStats = new VBox(6);
+        seccionStats.setAlignment(Pos.CENTER);
+        seccionStats.getChildren().addAll(btnStats, btnPista);
+
+
+        btnPista.getStyleClass().add("btn-pista");
+
+        topBar.getChildren().addAll(seccionMenu, espacio1, labelTitulo, espacio2, seccionStats);
 
         labelIntentos.setMaxWidth(Double.MAX_VALUE);
         labelIntentos.setAlignment(Pos.CENTER);
 
-        // Parte del centro
+        // Centro donde se ven los bloques y limites
         VBox seccionCentral = new VBox(12);
         seccionCentral.setAlignment(Pos.CENTER);
         seccionCentral.setPadding(new Insets(20, 30, 20, 30));
@@ -263,12 +289,6 @@ public class GUIBetweenle extends Application {
 
         contenedorFilas = new VBox(6);
         contenedorFilas.setAlignment(Pos.CENTER);
-
-        ScrollPane scrollFilas = new ScrollPane(contenedorFilas);
-        scrollFilas.setFitToWidth(true);
-        scrollFilas.setPrefHeight(200);
-        scrollFilas.getStyleClass().add("scroll-historial");
-
 
         HBox bloqueBajo = new HBox(4);
         bloqueBajo.setAlignment(Pos.CENTER);
@@ -305,6 +325,7 @@ public class GUIBetweenle extends Application {
         tecladoRangos.setPadding(new Insets(8, 0, 8, 0));
         actualizarTeclado();
 
+        // Sección donde pongo los botones que no les haya encontrado lugar, pero el de adivinanza va aqui
         HBox seccionBoton = new HBox();
         seccionBoton.setAlignment(Pos.CENTER);
         seccionBoton.getStyleClass().add("seccion-entrada");
@@ -312,21 +333,25 @@ public class GUIBetweenle extends Application {
         SoundButton btnAdivinar = new SoundButton(cadenaAdivinar, "/com/example/practica6/sonidoClick.mp3");
         btnAdivinar.getStyleClass().add("btn-adivinar");
 
-        ImageButton btnPista = new ImageButton(cadenaPista, "/com/example/practica6/prueba.png");
-        btnPista.getStyleClass().add("btn-pista");
-        seccionBoton.getChildren().addAll(btnAdivinar, btnPista);
+        seccionBoton.getChildren().addAll(btnAdivinar);
 
         seccionCentral.getChildren().addAll(bloqueBajo, filasConEspaciador, bloqueAlto);
 
-        // Final
+        // Aqui empiezo a meter todo y calcular el tamaño de la ventana
         contenedorVertical.getChildren().addAll(topBar, labelIntentos, seccionCentral, tecladoRangos, seccionBoton);
 
-        int anchoCelda = 44;   // ancho de cada celda
-        int espaciado = 6;    // spacing del HBox
-        int padding = 60;   // padding lateral de la sección central
-        int anchoAprox = 70;   // espacio del bloque de aproximación
+        // ancho de cada bloque
+        int anchoCelda = 44;
+        // Espaciado que le puse a los HBox de los bloques
+        int espaciado = 6;
+        // padding lateral de la sección central
+        int padding = 60;
+        // Espacio que tiene el bloque de aproximación
+        int anchoAprox = 70;
 
+        // Entre el tamaño que tenia originalmente y uno adaptado a la cantidad de bloques
         int anchoMinimo = 480;
+        // Formula que pregunte como sacar, y luego un Max para obtener el más grande de los dos
         int anchoCalculado = (anchoCelda * longitud) + (espaciado * (longitud - 1)) + (anchoAprox * 2) + padding;
         int anchoVentana = Math.max(anchoMinimo, anchoCalculado);
 
@@ -338,8 +363,10 @@ public class GUIBetweenle extends Application {
             System.out.println(errorCSS);
         }
 
+        // Eventos
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {
+                // Enlace la ventana con mis teclas, como el sudoku pero sin GridPane
                 case BACK_SPACE:
                     if (!textoActual.isEmpty()) {
                         textoActual = textoActual.substring(0, textoActual.length() - 1);
@@ -348,7 +375,9 @@ public class GUIBetweenle extends Application {
                     }
                     break;
                 case ENTER:
-                    procesarIntento(filaEscribir, btnAdivinar);
+                    if (!juego.juegoGanado() && !juego.juegoAcabado()) {
+                        procesarIntento(filaEscribir, btnAdivinar);
+                    }
                     break;
                 default:
                     String letra = e.getText().toLowerCase();
@@ -405,7 +434,11 @@ public class GUIBetweenle extends Application {
         stage.show();
     }
 
-
+    /**
+     * Este metodo crea el valor del bloque de aproximación
+     * @param texto Texto inicial que recibe el bloque, representado por una '-'
+     * @return Un StackPane que se usará para sobreponer el texto y el bloque
+     */
     private StackPane crearBloqueAprox(String texto) {
         Label num = new Label(texto);
         num.getStyleClass().add("approx-texto");
@@ -417,6 +450,12 @@ public class GUIBetweenle extends Application {
         return bloque;
     }
 
+    /**
+     * Metodo que devuelva una alerta, esta no tiene titulo ni encabezado, solo el contenido
+     * y el tipo de alerta a mostrar
+     * @param texto Texto que se mostrará en el cuerpo de la alerta
+     * @param tipoAlerta Tipo de alerta que desee el usuario, sea de error, aviso, informacion, etc.
+     */
     private void mostrarAlerta(String texto, Alert.AlertType tipoAlerta) {
         Alert alerta = new Alert(tipoAlerta);
         alerta.setTitle(null);
@@ -425,6 +464,12 @@ public class GUIBetweenle extends Application {
         alerta.showAndWait();
     }
 
+    /**
+     * Metodo que crea la fila donde se registrarán los intentos
+     * @param palabra Intento escrito por el usuario
+     * @param resultado Resultado obtenido por el intento, igual que en la vista del terminal
+     * @return Contenedor horizontal con los bloques
+     */
     private HBox crearFilaIntento(String palabra, int resultado) {
         HBox fila = new HBox(6);
         fila.setAlignment(Pos.CENTER);
@@ -442,6 +487,11 @@ public class GUIBetweenle extends Application {
         return fila;
     }
 
+    /**
+     * Metodo que crea y actualiza la fila donde se ubica cada limite
+     * @param palabra Palabra a mostrar
+     * @return Un contenedor central con los bloques bien acomodados
+     */
     private HBox crearFilaLimite(String palabra) {
         HBox fila = new HBox(6);
         fila.setAlignment(Pos.CENTER);
@@ -454,26 +504,31 @@ public class GUIBetweenle extends Application {
         return fila;
     }
 
+    /**
+     * Procesa el intento hecho por el usuario, basicamente lo mismo que en el controlador
+     * @param filaEscritura Fila donde el usuario escribio la palabra
+     * @param btnAdivinar Boton usado para la adivinación de la palabra, lo desactivamos si se acaba el juego
+     */
     private void procesarIntento(HBox filaEscritura, Button btnAdivinar) {
         String intento = textoActual.toLowerCase();
 
         // Cadenas traducidas
-        String cadenaTamano      = esIngles ? "The word must have " + juego.getPalabraSecreta().length() + " letters."
+        String cadenaTamano = esIngles ? "The word must have " + juego.getPalabraSecreta().length() + " letters."
                 : "La palabra debe tener " + juego.getPalabraSecreta().length() + " letras.";
-        String cadenaNoEnDic     = esIngles ? "The word '" + intento + "' is not in the dictionary. Add it?"
+        String cadenaNoEnDic = esIngles ? "The word '" + intento + "' is not in the dictionary. Add it?"
                 : "La palabra '" + intento + "' no está en el diccionario. ¿Deseas añadirla?";
-        String cadenaSi          = esIngles ? "Yes" : "Sí";
-        String cadenaDefinicion  = esIngles ? "Write the definition of '" + intento.toUpperCase() + "':"
+        String cadenaSi = esIngles ? "Yes" : "Sí";
+        String cadenaDefinicion = esIngles ? "Write the definition of '" + intento.toUpperCase() + "':"
                 : "Escribe la definición de '" + intento.toUpperCase() + "':";
-        String cadenaFueraBajo   = esIngles ? "Word out of range. Enter a word after: " + juego.getPalabraBaja().toUpperCase()
+        String cadenaFueraBajo = esIngles ? "Word out of range. Enter a word after: " + juego.getPalabraBaja().toUpperCase()
                 : "Palabra fuera del rango. Introduce una palabra después de: " + juego.getPalabraBaja().toUpperCase();
-        String cadenaFueraAlto   = esIngles ? "Word out of range. Enter a word before: " + juego.getPalabraAlta().toUpperCase()
+        String cadenaFueraAlto = esIngles ? "Word out of range. Enter a word before: " + juego.getPalabraAlta().toUpperCase()
                 : "Palabra fuera del rango. Introduce una palabra antes de: " + juego.getPalabraAlta().toUpperCase();
-        String cadenaGanaste     = esIngles ? "Congratulations, you won! The word was: " + juego.getPalabraSecreta().toUpperCase()
+        String cadenaGanaste = esIngles ? "Congratulations, you won! The word was: " + juego.getPalabraSecreta().toUpperCase()
                 : "¡Felicidades, ganaste! La palabra era: " + juego.getPalabraSecreta().toUpperCase();
-        String cadenaPerdiste    = esIngles ? "Game over! The secret word was: " + juego.getPalabraSecreta().toUpperCase()
+        String cadenaPerdiste = esIngles ? "Game over! The secret word was: " + juego.getPalabraSecreta().toUpperCase()
                 : "Sin intentos. La palabra secreta era: " + juego.getPalabraSecreta().toUpperCase();
-        String cadenaIntentos    = esIngles ? "Attempts: " : "Intentos: ";
+        String cadenaIntentos = esIngles ? "Attempts: " : "Intentos: ";
 
         if (intento.length() != juego.getPalabraSecreta().length()) {
             mostrarAlerta(cadenaTamano, Alert.AlertType.WARNING);
@@ -517,9 +572,8 @@ public class GUIBetweenle extends Application {
             return;
         }
 
-        // Congelar fila en historial
-        HBox filaCongelada = crearFilaIntento(intento, resultado);
-        contenedorFilas.getChildren().add(0, filaCongelada);
+        HBox filaIntento = crearFilaIntento(intento, resultado);
+        contenedorFilas.getChildren().add(0, filaIntento);
 
         // Limpiar fila de escritura
         if (resultado == 0 || juego.juegoGanado()) {
@@ -553,6 +607,11 @@ public class GUIBetweenle extends Application {
         }
     }
 
+    /**
+     * Calcula las distancias entre los limites y la palabra secreta, importado del modelo
+     * @param limiteInicial Limite inicial que tenemos (palabra de abajo)
+     * @param limiteFinal Limite final que tenemos (la palabra de arriba, no preguntes)
+     */
     private void calcularDistancias(String limiteInicial, String limiteFinal) {
         double[] distancias = null;
         if (!juego.getPalabraBaja().equals(limiteInicial) || !juego.getPalabraAlta().equals(limiteFinal)) {
@@ -567,6 +626,10 @@ public class GUIBetweenle extends Application {
         }
     }
 
+    /**
+     * Actualiza la fila del medio a medida que escribimos
+     * @param fila Contenedor con los bloques
+     */
     private void actualizarFilaEscritura(HBox fila) {
         for (int i = 0; i < fila.getChildren().size(); i++) {
             Label celda = (Label) fila.getChildren().get(i);
@@ -578,13 +641,18 @@ public class GUIBetweenle extends Application {
         }
     }
 
+    /**
+     * Muestra una alerta con las estadisticas del juego actual, aqui se encuentran:
+     * - Las palabras ingresadas
+     * - Las letras que hay actualmente en los limites.
+     */
     private void mostrarEstadisticas() {
         java.util.ArrayList<String> historial = juego.getHistorialPalabras();
 
         String cadenaIntentosRealizados = esIngles ? "Attempts made: " : "Intentos realizados: ";
-        String cadenaNingunIntento      = esIngles ? "No attempts made yet." : "No se ha realizado ningún intento.";
-        String cadenaIngresadas         = esIngles ? "Words entered:\n" : "Palabras ingresadas:\n";
-        String cadenaLetrasUsadas       = esIngles ? "\nLetters used:\n  " : "\nLetras usadas:\n  ";
+        String cadenaNingunIntento = esIngles ? "No attempts made yet." : "No se ha realizado ningún intento.";
+        String cadenaIngresadas = esIngles ? "Words entered:\n" : "Palabras ingresadas:\n";
+        String cadenaLetrasUsadas = esIngles ? "\nLetters used:\n  " : "\nLetras usadas:\n  ";
 
         StringBuilder sb = new StringBuilder();
         sb.append(cadenaIntentosRealizados)
@@ -611,21 +679,23 @@ public class GUIBetweenle extends Application {
         mostrarAlerta(sb.toString(), Alert.AlertType.INFORMATION);
     }
 
+    /**
+     * Muestra una ventana al usuario para seleccionar una pista, y realiza una en caso de que seleccione
+     * @param btnPista Boton que se presiono para la pista, se desactiva al usarse una
+     */
     private void usarPista(Button btnPista) {
-
-
         String cadenaPistaUsada = esIngles ? "You already used your hint. Take a guess, I believe in you."
                 : "Ya usaste tu pista en esta partida.";
         String cadenaEligePista = esIngles ? "Choose your hint:" : "Elige tu pista:";
         String cadenaOpc1 = esIngles ? "Move upper limit" : "Recorrer límite alto";
         String cadenaOpc2 = esIngles ? "Move lower limit" : "Recorrer límite bajo";
         String cadenaOpc3 = esIngles ? "Show first letter" : "Mostrar primera letra";
-        String cadenaBajaCerca       = esIngles ? "The upper limit is already very close to the secret word." : "El límite de arriba ya está muy cerca de la palabra secreta.";
-        String cadenaNuevoBajo       = esIngles ? "New upper limit: " : "Nuevo límite alto: ";
-        String cadenaSinPistaAun     = esIngles ? "Cannot give a hint yet, limits are still at starting positions." : "No se puede dar una pista aún, los límites siguen siendo los iniciales.";
-        String cadenaAltaCerca       = esIngles ? "The lower limit is already very close to the secret word." : "El límite de abajo ya está muy cerca de la palabra secreta.";
-        String cadenaNuevoAlto       = esIngles ? "New lower limit: " : "Nuevo límite bajo: ";
-        String cadenaPrimeraLetra    = esIngles ? "The secret word starts with: " : "La palabra secreta empieza con: ";
+        String cadenaBajaCerca = esIngles ? "The upper limit is already very close to the secret word." : "El límite de arriba ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoBajo = esIngles ? "New upper limit: " : "Nuevo límite alto: ";
+        String cadenaSinPistaAun = esIngles ? "Cannot give a hint yet, limits are still at starting positions." : "No se puede dar una pista aún, los límites siguen siendo los iniciales.";
+        String cadenaAltaCerca = esIngles ? "The lower limit is already very close to the secret word." : "El límite de abajo ya está muy cerca de la palabra secreta.";
+        String cadenaNuevoAlto = esIngles ? "New lower limit: " : "Nuevo límite bajo: ";
+        String cadenaPrimeraLetra = esIngles ? "The secret word starts with: " : "La palabra secreta empieza con: ";
         String limiteInicial = "a".repeat(juego.getPalabraSecreta().length());
         String limiteFinal = "z".repeat(juego.getPalabraSecreta().length());
 
@@ -692,6 +762,11 @@ public class GUIBetweenle extends Application {
 
     }
 
+    /**
+     * Actualiza el teclado dinamico que te dice los rangos existentes entre
+     * cada letra, es el metodo que más me ha costado en esta práctica
+     *
+     */
     private void actualizarTeclado() {
         tecladoRangos.getChildren().clear();
 
@@ -721,15 +796,16 @@ public class GUIBetweenle extends Application {
         char cBajaPos = juego.getPalabraBaja().charAt(pos);
         char cAltaPos = juego.getPalabraAlta().charAt(pos);
 
+        // Caso 1, si esta entre ambos rangos, se calcula el rango entre ambas letras
         if (dentroRangoBaja && dentroRangoAlta) {
             primeraLetra = cBajaPos;
             ultimaLetra = cAltaPos;
         } else if (dentroRangoBaja) {
-            // caso 2
+            // caso 2, si esta dentro el rango de la palabra de arriba, sera de esta hasta Z
             primeraLetra = cBajaPos;
             ultimaLetra = 'z';
         } else if (dentroRangoAlta) {
-            // caso 3, basicamente es alreves jeje
+            // caso 3, basicamente lo mismo que el 2 pero al reves
             primeraLetra = 'a';
             ultimaLetra = cAltaPos;
         } else {
@@ -741,14 +817,15 @@ public class GUIBetweenle extends Application {
                 primeraLetra = 'a';
                 ultimaLetra = 'z';
             } else {
-                // Si se sale del rango gg
+                // Si se sale del rango, se desactiva todo
                 primeraLetra = (char) ('z' + 1);
                 ultimaLetra = (char) ('a' - 1);
             }
         }
 
+        // Aqui ya lo coloreamos como deberia quedar
         for (char c = 'a'; c <= 'z'; c++) {
-            ShapeButton tecla = new ShapeButton(String.valueOf(c).toUpperCase(), 15);
+            ShapeButton tecla = new ShapeButton(String.valueOf(c).toUpperCase(), 15, 3);
             tecla.getStyleClass().add("tecla-letra");
 
             if (c >= primeraLetra && c <= ultimaLetra) {
@@ -764,15 +841,18 @@ public class GUIBetweenle extends Application {
         tecladoRangos.getChildren().addAll(fila1, fila2);
     }
 
+    /**
+     * Inicializa la musica del juego
+     */
     private void iniciarMusica() {
         if (musicaFondo != null) return; // ya está sonando, no hacer nada
 
         try {
-            javafx.scene.media.Media media = new javafx.scene.media.Media(
+            Media media = new Media(
                     getClass().getResource("/com/example/practica6/musicaFondo.mp3").toURI().toString()
             );
-            musicaFondo = new javafx.scene.media.MediaPlayer(media);
-            musicaFondo.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+            musicaFondo = new MediaPlayer(media);
+            musicaFondo.setCycleCount(MediaPlayer.INDEFINITE);
             musicaFondo.setVolume(0.1);
             musicaFondo.setCycleCount(MediaPlayer.INDEFINITE);
             musicaFondo.play();

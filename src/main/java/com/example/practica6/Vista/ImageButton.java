@@ -5,11 +5,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-
-import java.io.IOException;
 
 public class ImageButton extends Button {
+    /**
+     * Crea un boton el cual es representado por una imagen
+     * @param rutaImagen Ruta a la imagen, sea un archivo .png, .jpg, .jpeg, etc.
+     * @param alto Altura de la imagen
+     * @param ancho Anchura de la imagen
+     */
     public ImageButton(String rutaImagen, int alto, int ancho) {
         super();
         try {

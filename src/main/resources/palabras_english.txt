@@ -3827,7 +3827,7 @@ banana
 bananas
 banbury
 banca:bancas
-bancanc:bancan chat?
+bancanchat:bancan chat?
 bancroft
 band
 bandage
@@ -8179,6 +8179,7 @@ chute
 chutes
 chutzpah
 cicada
+cicadas:group of cidada
 cicero
 ciceronian
 ciceronianize
@@ -13775,6 +13776,7 @@ dubiously
 dubiousness
 dublin
 dubs
+dubstep:music genre
 dubuque
 duchess
 duchesses
@@ -30116,6 +30118,7 @@ pews
 pewter
 pfizer
 phaedra
+phainon:salvador
 phantom
 phantoms
 pharmaceutic
@@ -37450,7 +37453,7 @@ skill
 skilled
 skillet
 skillful
-skillfullness:Palabra que me invente al chile
+skillfullness:palabra que me invente al chile
 skillfully
 skillfulness
 skills
@@ -38112,6 +38115,7 @@ son
 sonar
 sonata
 sonenberg
+sones:Bro what are these words 🥀
 song
 songbook
 songs
@@ -42779,6 +42783,7 @@ unfounded
 unfriendliness
 unfriendly
 unfulfilled
+unfunny:when you aren't funny
 ungrammatical
 ungrateful
 ungratefully
